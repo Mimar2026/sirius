@@ -1,0 +1,55 @@
+<svg width="680" height="680" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+<title>Sirius Logo</title>
+<rect x="40" y="40" width="600" height="600" rx="80" fill="#0b1929"/>
+<g opacity="0.06">
+<line x1="100" y1="220" x2="600" y2="220" stroke="#7dd3fc" stroke-width="1"/>
+<line x1="100" y1="340" x2="600" y2="340" stroke="#7dd3fc" stroke-width="1"/>
+<line x1="100" y1="460" x2="600" y2="460" stroke="#7dd3fc" stroke-width="1"/>
+<line x1="220" y1="100" x2="220" y2="580" stroke="#7dd3fc" stroke-width="1"/>
+<line x1="340" y1="100" x2="340" y2="580" stroke="#7dd3fc" stroke-width="1"/>
+<line x1="460" y1="100" x2="460" y2="580" stroke="#7dd3fc" stroke-width="1"/>
+</g>
+<g opacity="0.4">
+<circle cx="150" cy="150" r="2" fill="#bae6fd"/>
+<circle cx="540" cy="180" r="1.5" fill="#bae6fd"/>
+<circle cx="580" cy="450" r="2" fill="#7dd3fc"/>
+<circle cx="130" cy="500" r="1.5" fill="#7dd3fc"/>
+<circle cx="500" cy="120" r="1" fill="#bae6fd"/>
+<circle cx="120" cy="380" r="1" fill="#bae6fd"/>
+</g>
+<path d="M 200 420 L 245 410 L 290 380 L 335 340 L 380 290 L 430 230 L 480 170 L 530 140 L 530 580 L 200 580 Z" fill="#22c55e" opacity="0.2"/>
+<path d="M 200 420 L 245 410 L 290 380 L 335 340 L 380 290 L 430 230 L 480 170 L 530 140" stroke="#22c55e" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="245" cy="410" r="6" fill="#22c55e"/>
+<circle cx="245" cy="410" r="3" fill="#0b1929"/>
+<circle cx="290" cy="380" r="6" fill="#22c55e"/>
+<circle cx="290" cy="380" r="3" fill="#0b1929"/>
+<circle cx="335" cy="340" r="6" fill="#22c55e"/>
+<circle cx="335" cy="340" r="3" fill="#0b1929"/>
+<circle cx="380" cy="290" r="6" fill="#22c55e"/>
+<circle cx="380" cy="290" r="3" fill="#0b1929"/>
+<circle cx="430" cy="230" r="6" fill="#22c55e"/>
+<circle cx="430" cy="230" r="3" fill="#0b1929"/>
+<circle cx="480" cy="170" r="6" fill="#22c55e"/>
+<circle cx="480" cy="170" r="3" fill="#0b1929"/>
+<circle cx="530" cy="140" r="8" fill="#22c55e"/>
+<g opacity="0.35">
+<path d="M 230 420 Q 240 425 250 410" stroke="#bae6fd" stroke-width="2" fill="none" stroke-linecap="round"/>
+<path d="M 235 440 Q 250 450 265 430" stroke="#bae6fd" stroke-width="2" fill="none" stroke-linecap="round"/>
+<path d="M 240 460 Q 260 475 280 455" stroke="#bae6fd" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+</g>
+<g transform="translate(200, 420)">
+<circle cx="0" cy="0" r="55" fill="#7dd3fc" opacity="0.12"/>
+<circle cx="0" cy="0" r="40" fill="#bae6fd" opacity="0.18"/>
+<path d="M 0 -110 L 11 0 L 0 110 L -11 0 Z" fill="#ffffff"/>
+<path d="M -110 0 L 0 -11 L 110 0 L 0 11 Z" fill="#ffffff"/>
+<path d="M -55 -55 L 0 -8 L 55 -55 L 8 0 L 55 55 L 0 8 L -55 55 L -8 0 Z" fill="#bae6fd" opacity="0.9"/>
+<circle cx="0" cy="0" r="22" fill="#ffffff" opacity="0.5"/>
+<circle cx="0" cy="0" r="13" fill="#ffffff"/>
+<circle cx="0" cy="0" r="6" fill="#fef9c3"/>
+</g>
+<g transform="translate(560, 130)" opacity="0.7">
+<path d="M 0 -16 L 3 0 L 0 16 L -3 0 Z" fill="#bae6fd"/>
+<path d="M -16 0 L 0 -3 L 16 0 L 0 3 Z" fill="#bae6fd"/>
+<circle cx="0" cy="0" r="3" fill="#ffffff"/>
+</g>
+</svg>
