@@ -98,4 +98,86 @@ Workflow durumunu görmek için: [Actions sekmesi](https://github.com/Mimar2026/
 
 ## Manuel Çalıştırma
 
-```bash
+Bağımlılıkları yükle ve scripti çalıştır:
+
+    pip install -r requirements.txt
+    python momentum_system.py
+    python backtest.py
+
+## Telegram Bildirimi
+
+Telegram entegrasyonu için ortam değişkenlerini ayarla:
+
+    export TELEGRAM_BOT_TOKEN="bot_tokeniniz"
+    export TELEGRAM_CHAT_ID="chat_id_niz"
+    python momentum_system.py
+
+Bot kurulumu için [BotFather](https://t.me/BotFather) üzerinden bot oluştur ve token al.
+
+## Dosya Yapısı
+
+    sirius/
+    ├── .github/workflows/
+    │   └── monthly_run.yml
+    ├── assets/
+    │   ├── sirius_avatar.png
+    │   ├── sirius_avatar_hd.png
+    │   ├── sirius_banner.png
+    │   └── ...
+    ├── README.md
+    ├── momentum_system.py
+    ├── backtest.py
+    └── requirements.txt
+
+## Sistem Hakkında Notlar
+
+### Güçlü Yönler
+- **Tutarlı outperformance:** 6 yılın 6'sında da S&P 500'ü yendi
+- **2022 ayı piyasasında pozitif getiri** — momentum stratejileri için olağandışı
+- **Düşük max drawdown** — Çoklu lookback rejim değişikliklerini hızlı yakalar
+- **Yüksek Sharpe oranı** (1,67) — Risk-ayarlı getiri üstün
+
+### Riskler
+- **Survivorship bias:** Backtest şu anki S&P 500 üyelerini kullanır. Gerçek getiri %5-15 daha düşük olabilir
+- **İşlem maliyetleri** hesaplanmamış (~%1-3/yıl)
+- **Vergi:** Aylık rebalans → yüksek kısa vadeli sermaye kazancı vergisi
+- **Konsantrasyon riski:** Top 10 ağırlıklı olarak teknoloji/yarı iletken sektöründe
+- **Momentum crash riski:** Trend dönüşlerinde sert düşüşler yaşanabilir
+
+## Veri Kaynakları
+
+- **Fiyat verisi:** [yfinance](https://github.com/ranaroussi/yfinance)
+- **Hisse listesi:** Wikipedia (S&P 500, Nasdaq 100)
+
+## Teknoloji Yığını
+
+Python 3.11, pandas, numpy, yfinance, lxml, beautifulsoup4, requests, GitHub Actions, Telegram Bot API
+
+## Yol Haritası
+
+- [x] Temel momentum modeli (3+6+12 ay kompozit skor)
+- [x] Backtest motoru (7 yıllık tarihsel test)
+- [x] Telegram bildirimi
+- [x] GitHub Actions ile otomatik aylık çalıştırma
+- [ ] Hata yakalama ve retry mantığı
+- [ ] Geçmiş seçimler logu
+- [ ] Quality faktörü (ROE, kâr büyümesi, brüt marj)
+- [ ] Sektör çeşitlendirme kuralı
+- [ ] Düşük volatilite filtresi
+- [ ] QuantConnect entegrasyonu
+- [ ] BIST evrenine uyarlama (katılım vs genel)
+- [ ] Dashboard (web arayüzü)
+
+## Uyarı
+
+Bu proje **eğitim ve araştırma amaçlıdır**. Yatırım tavsiyesi değildir. Geçmiş performans gelecek getiri garantisi vermez.
+
+## Lisans
+
+MIT License
+
+---
+
+<div align="center">
+  <sub>Built with care, guided by a star.</sub>
+</div>
