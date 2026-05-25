@@ -1,6 +1,3 @@
-======================================================================
-bist_data.py GUNCEL HALI - Kopyalanip GitHub'a yapistirilacak:
-======================================================================
 """
 Sirius BIST - Veri Cekme Modulu (Hibrit)
 
@@ -15,7 +12,6 @@ import time
 import pandas as pd
 
 # Iki paketi de import et
-# Eger biri yuklu degilse hata mesajini yakala
 BORSAPY_VAR = False
 ISYATIRIM_VAR = False
 
@@ -42,12 +38,10 @@ def borsapy_ile_cek(sembol, baslangic, bitis):
     
     ticker = bp.Ticker(sembol)
     
-    # Tarih araligi hesapla
     baslangic_dt = pd.to_datetime(baslangic)
     bitis_dt = pd.to_datetime(bitis)
     gun_sayisi = (bitis_dt - baslangic_dt).days
     
-    # Period stringi belirle
     if gun_sayisi <= 30:
         period = "1ay"
     elif gun_sayisi <= 90:
@@ -78,12 +72,11 @@ def borsapy_ile_cek(sembol, baslangic, bitis):
 def isyatirimhisse_ile_cek(sembol, baslangic, bitis):
     """
     Tek hisse icin isyatirimhisse kullanarak gunluk fiyat verisi ceker.
-    Format: tarih formati "DD-MM-YYYY" (paket buyle bekliyor).
+    isyatirimhisse 4.x API: fetch_stock_data fonksiyonu.
     """
     if not ISYATIRIM_VAR:
         raise Exception("isyatirimhisse yuklu degil")
     
-    # isyatirimhisse 4.x API: tarih formati DD-MM-YYYY
     baslangic_iy = pd.to_datetime(baslangic).strftime("%d-%m-%Y")
     bitis_iy = pd.to_datetime(bitis).strftime("%d-%m-%Y")
     
@@ -100,6 +93,9 @@ def isyatirimhisse_ile_cek(sembol, baslangic, bitis):
     elif 'date' in df.columns:
         df['date'] = pd.to_datetime(df['date'])
         df = df.set_index('date')
+    elif 'HGDG_TARIH' in df.columns:
+        df['HGDG_TARIH'] = pd.to_datetime(df['HGDG_TARIH'])
+        df = df.set_index('HGDG_TARIH')
     
     return df
 
@@ -113,9 +109,6 @@ def fiyat_cek(sembol, baslangic, bitis, kaynak="auto"):
         baslangic: Baslangic tarihi "YYYY-MM-DD" formatinda
         bitis: Bitis tarihi "YYYY-MM-DD" formatinda
         kaynak: "borsapy", "isyatirim" veya "auto" (her ikisini de dene)
-    
-    Returns:
-        pandas DataFrame veya None (basarisiz olursa)
     """
     if kaynak == "borsapy":
         return borsapy_ile_cek(sembol, baslangic, bitis)
@@ -131,7 +124,6 @@ def fiyat_cek(sembol, baslangic, bitis, kaynak="auto"):
     except Exception as e:
         print(f"  [{sembol}] borsapy hatasi: {str(e)[:80]}")
     
-    # Yedek olarak isyatirim
     try:
         df = isyatirimhisse_ile_cek(sembol, baslangic, bitis)
         if df is not None and len(df) > 0:
@@ -145,12 +137,6 @@ def fiyat_cek(sembol, baslangic, bitis, kaynak="auto"):
 def coklu_fiyat_cek(semboller, baslangic, bitis, ilerleme_goster=True):
     """
     Birden fazla hisse icin fiyat verisi ceker.
-    
-    Sembollerin her birini tek tek dener, basarisiz olanlari atlar.
-    
-    Returns:
-        Tum hisselerin kapanis fiyatlarini iceren bir DataFrame.
-        Index: tarih, Columns: hisse kodlari.
     """
     fiyat_dict = {}
     basarisiz = []
@@ -166,7 +152,7 @@ def coklu_fiyat_cek(semboller, baslangic, bitis, ilerleme_goster=True):
                 basarisiz.append(sembol)
                 continue
             
-            # Kapanis kolonunu bul (Close veya CLOSING gibi olabilir)
+            # Kapanis kolonunu bul
             kapanis_kol = None
             for kol_aday in ['Close', 'close', 'CLOSE', 'HGDG_KAPANIS', 'Kapanis']:
                 if kol_aday in df.columns:
@@ -174,7 +160,6 @@ def coklu_fiyat_cek(semboller, baslangic, bitis, ilerleme_goster=True):
                     break
             
             if kapanis_kol is None:
-                # Eger bir kapanis kolonu yoksa, ilk numerik kolonu kullan
                 numerik_kollar = df.select_dtypes(include='number').columns
                 if len(numerik_kollar) > 0:
                     kapanis_kol = numerik_kollar[0]
@@ -184,7 +169,6 @@ def coklu_fiyat_cek(semboller, baslangic, bitis, ilerleme_goster=True):
             
             fiyat_dict[sembol] = df[kapanis_kol]
             
-            # Cok hizli istek atmamak icin kucuk bekleme
             time.sleep(0.1)
             
         except Exception as e:
@@ -197,7 +181,6 @@ def coklu_fiyat_cek(semboller, baslangic, bitis, ilerleme_goster=True):
         if basarisiz and len(basarisiz) < 20:
             print(f"  Basarisiz semboller: {', '.join(basarisiz)}")
     
-    # Tum hisseleri tek bir DataFrame'de birlestir
     if len(fiyat_dict) == 0:
         return pd.DataFrame()
     
@@ -208,7 +191,6 @@ def coklu_fiyat_cek(semboller, baslangic, bitis, ilerleme_goster=True):
 def aylik_fiyatlara_donustur(gunluk_fiyatlar, min_veri_yuzdesi=70):
     """
     Gunluk fiyatlari aylik kapanislara cevirir.
-    Yeterli verisi olmayan hisseleri eler.
     """
     aylik = gunluk_fiyatlar.resample("ME").last()
     veri_yuzdesi = aylik.notna().sum() / len(aylik) * 100
@@ -216,9 +198,6 @@ def aylik_fiyatlara_donustur(gunluk_fiyatlar, min_veri_yuzdesi=70):
     return aylik[gecerli]
 
 
-# ====================================================================
-# TEST
-# ====================================================================
 if __name__ == "__main__":
     print("=" * 60)
     print("BIST DATA MODULU - TEST")
@@ -227,7 +206,6 @@ if __name__ == "__main__":
     print(f"\nborsapy yuklu mu: {BORSAPY_VAR}")
     print(f"isyatirimhisse yuklu mu: {ISYATIRIM_VAR}")
     
-    # Tek hisse testi
     print("\n[Test 1] THYAO son 30 gun verisi...")
     df = fiyat_cek("THYAO", "2026-04-25", "2026-05-25")
     if df is not None:
@@ -236,7 +214,6 @@ if __name__ == "__main__":
     else:
         print("  Basarisiz!")
     
-    # Coklu hisse testi
     print("\n[Test 2] 5 hisselik mini batch testi...")
     test_semboller = ["THYAO", "AKBNK", "ASELS", "GARAN", "BIMAS"]
     coklu_df = coklu_fiyat_cek(test_semboller, "2026-04-25", "2026-05-25")
