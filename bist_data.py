@@ -1,3 +1,6 @@
+======================================================================
+bist_data.py GUNCEL HALI - Kopyalanip GitHub'a yapistirilacak:
+======================================================================
 """
 Sirius BIST - Veri Cekme Modulu (Hibrit)
 
@@ -23,7 +26,7 @@ except ImportError:
     print("UYARI: borsapy yuklu degil. Sadece isyatirimhisse kullanilacak.")
 
 try:
-    from isyatirimhisse import veri_cek as isyat_veri_cek
+    from isyatirimhisse import fetch_stock_data
     ISYATIRIM_VAR = True
 except ImportError:
     print("UYARI: isyatirimhisse yuklu degil. Sadece borsapy kullanilacak.")
@@ -62,6 +65,10 @@ def borsapy_ile_cek(sembol, baslangic, bitis):
     
     df = ticker.history(period=period)
     
+    # Timezone uyumsuzlugunu cozmek icin index'i timezone-naive yap
+    if df.index.tz is not None:
+        df.index = df.index.tz_localize(None)
+    
     # Tarih indekslerini filtrele
     df = df[(df.index >= baslangic_dt) & (df.index <= bitis_dt)]
     
@@ -76,16 +83,23 @@ def isyatirimhisse_ile_cek(sembol, baslangic, bitis):
     if not ISYATIRIM_VAR:
         raise Exception("isyatirimhisse yuklu degil")
     
-    # Tarih formatini cevir (YYYY-MM-DD -> DD-MM-YYYY)
+    # isyatirimhisse 4.x API: tarih formati DD-MM-YYYY
     baslangic_iy = pd.to_datetime(baslangic).strftime("%d-%m-%Y")
     bitis_iy = pd.to_datetime(bitis).strftime("%d-%m-%Y")
     
-    df = isyat_veri_cek(
-        sembol=sembol,
-        baslangic_tarih=baslangic_iy,
-        bitis_tarih=bitis_iy,
-        frekans='1g'
+    df = fetch_stock_data(
+        symbols=sembol,
+        start_date=baslangic_iy,
+        end_date=bitis_iy
     )
+    
+    # Tarih kolonu varsa index'e cevir
+    if 'DATE' in df.columns:
+        df['DATE'] = pd.to_datetime(df['DATE'])
+        df = df.set_index('DATE')
+    elif 'date' in df.columns:
+        df['date'] = pd.to_datetime(df['date'])
+        df = df.set_index('date')
     
     return df
 
