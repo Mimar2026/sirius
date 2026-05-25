@@ -10,11 +10,13 @@ on:
 
 jobs:
   # ============================================
-  # JOB 1: Saf Momentum (Orjinal sistem)
+  # ABD SISTEMLERI
   # ============================================
-  run-momentum:
+  
+  # JOB 1: Saf Momentum (ABD)
+  abd-momentum:
     runs-on: ubuntu-latest
-    name: Saf Momentum
+    name: ABD - Saf Momentum
     
     steps:
       - name: Checkout repository
@@ -30,18 +32,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       
-      - name: Run Sirius Momentum
+      - name: Run ABD Momentum
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python momentum_system.py
   
-  # ============================================
-  # JOB 2: Sektor Cesitlendirmeli Momentum
-  # ============================================
-  run-diverse:
+  # JOB 2: Sektor Cesitlendirme (ABD)
+  abd-diverse:
     runs-on: ubuntu-latest
-    name: Sektor Cesitlendirme
+    name: ABD - Sektor Diverse
     
     steps:
       - name: Checkout repository
@@ -57,18 +57,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       
-      - name: Run Sirius Diverse
+      - name: Run ABD Diverse
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python momentum_sector_diverse.py
   
-  # ============================================
-  # JOB 3: Quality Momentum
-  # ============================================
-  run-quality:
+  # JOB 3: Quality Momentum (ABD)
+  abd-quality:
     runs-on: ubuntu-latest
-    name: Quality Momentum
+    name: ABD - Quality Momentum
     
     steps:
       - name: Checkout repository
@@ -84,8 +82,64 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       
-      - name: Run Sirius Quality
+      - name: Run ABD Quality
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python momentum_quality.py
+  
+  # ============================================
+  # BIST SISTEMLERI
+  # ============================================
+  
+  # JOB 4: BIST KATILIM (Top 5)
+  bist-katilim:
+    runs-on: ubuntu-latest
+    name: BIST - Katilim Top 5
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Run BIST Katilim
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python bist_momentum_katilim.py
+  
+  # JOB 5: BIST GENEL (Top 5)
+  bist-genel:
+    runs-on: ubuntu-latest
+    name: BIST - Genel Top 5
+    timeout-minutes: 45
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Run BIST Genel
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python bist_momentum_genel.py
