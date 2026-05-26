@@ -150,8 +150,101 @@ def momentum_skoru_hesapla(aylik_fiyatlar, lookback_aylar=[3, 6, 12]):
     return skor_df.sort_values("Momentum", ascending=False).reset_index(drop=True)
 
 
-def telegram_mesaji_olustur(top10, tarih):
-    """Top 10 listesini guzel formatli Telegram mesajina cevirir."""
+def son_fiyat_ve_ortalama_hesapla(aylik_fiyatlar, gunluk_fiyatlar=None):
+    """
+    Her hisse icin son kapanis ve 30-gun ortalama hesaplar.
+    Returns: {sembol: {"kapanis": float, "ort_30": float, "volatilite": float}}
+    """
+    sonuc = {}
+    if gunluk_fiyatlar is None:
+        # Eger gunluk veri yoksa, sadece aylik son fiyati kullan
+        for sembol in aylik_fiyatlar.columns:
+            if pd.notna(aylik_fiyatlar[sembol].iloc[-1]):
+                sonuc[sembol] = {
+                    "kapanis": float(aylik_fiyatlar[sembol].iloc[-1]),
+                    "ort_30": float(aylik_fiyatlar[sembol].iloc[-1]),
+                    "volatilite": 0.0
+                }
+        return sonuc
+    
+    # Gunluk veri varsa hesapla
+    son_30 = gunluk_fiyatlar.tail(30)
+    
+    for sembol in gunluk_fiyatlar.columns:
+        seri = gunluk_fiyatlar[sembol].dropna()
+        if len(seri) == 0:
+            continue
+        
+        kapanis = float(seri.iloc[-1])
+        ort_30 = float(son_30[sembol].dropna().mean()) if len(son_30[sembol].dropna()) > 0 else kapanis
+        
+        # Gunluk volatilite (std / ortalama * 100)
+        getiri = seri.pct_change().dropna().tail(30)
+        volatilite = float(getiri.std() * 100) if len(getiri) > 0 else 0.0
+        
+        sonuc[sembol] = {
+            "kapanis": kapanis,
+            "ort_30": ort_30,
+            "volatilite": volatilite
+        }
+    
+    return sonuc
+
+
+def risk_seviyesi_hesapla(row, fiyat_bilgi=None):
+    """
+    Her hisse icin 1-5 arasi risk skoru hesaplar.
+    Returns: (skor, gosterge_string)
+    """
+    risk = 0
+    
+    # 1. Yuksek volatilite (gunluk std > %5)
+    if fiyat_bilgi and fiyat_bilgi.get("volatilite", 0) > 5:
+        risk += 1
+    elif fiyat_bilgi and fiyat_bilgi.get("volatilite", 0) > 3:
+        risk += 0  # Orta volatilite, risk artirma
+    
+    # 2. Asiri getiri (12A > %300 yani overextended)
+    getiri_12 = row.get("12 Ay %", 0)
+    if pd.notna(getiri_12):
+        if getiri_12 > 500:
+            risk += 2
+        elif getiri_12 > 300:
+            risk += 1
+    
+    # 3. Cok yuksek 6A getiri (parabolik hareket)
+    getiri_6 = row.get("6 Ay %", 0)
+    if pd.notna(getiri_6):
+        if getiri_6 > 200:
+            risk += 1
+    
+    # 4. Cok yuksek skor (overcrowded trade)
+    skor = row.get("Momentum", 0)
+    if skor > 99.5:
+        risk += 1
+    
+    # En fazla 5
+    risk = min(risk, 5)
+    
+    # Gosterge
+    if risk == 0:
+        gosterge = "🟢 (0/5)"
+    elif risk == 1:
+        gosterge = "⚠️ (1/5)"
+    elif risk == 2:
+        gosterge = "⚠️⚠️ (2/5)"
+    elif risk == 3:
+        gosterge = "⚠️⚠️⚠️ (3/5)"
+    elif risk == 4:
+        gosterge = "🔴🔴🔴🔴 (4/5)"
+    else:
+        gosterge = "🔴🔴🔴🔴🔴 (5/5)"
+    
+    return risk, gosterge
+
+
+def telegram_mesaji_olustur(top10, tarih, gunluk_fiyatlar=None, aylik_fiyatlar=None):
+    """Top 10 listesini detayli aksiyon mesajina cevirir."""
     ay_isimleri = {
         1: "Ocak", 2: "Subat", 3: "Mart", 4: "Nisan",
         5: "Mayis", 6: "Haziran", 7: "Temmuz", 8: "Agustos",
@@ -160,21 +253,91 @@ def telegram_mesaji_olustur(top10, tarih):
     ay_adi = ay_isimleri[tarih.month]
     yil = tarih.year
     
-    mesaj = "<b>🌟 SIRIUS - " + ay_adi + " " + str(yil) + " Portfoyu</b>\n\n"
-    mesaj += "<i>A signal arrives before the rise.</i>\n\n"
-    mesaj += "<b>Top 10 Hisse:</b>\n"
-    mesaj += "<pre>"
+    # Sonraki ay (gecerlilik bitisi icin)
+    if tarih.month == 12:
+        sonraki_ay = "Ocak"
+        sonraki_yil = yil + 1
+    else:
+        sonraki_ay = ay_isimleri[tarih.month + 1]
+        sonraki_yil = yil
     
+    # Fiyat ve volatilite hesapla
+    fiyat_dict = son_fiyat_ve_ortalama_hesapla(aylik_fiyatlar, gunluk_fiyatlar) if aylik_fiyatlar is not None else {}
+    
+    mesaj = f"<b>🌟 SIRIUS - {ay_adi} {yil}</b>\n"
+    mesaj += "<i>A signal arrives before the rise.</i>\n\n"
+    mesaj += "<b>📊 Top 10 Portföy</b> (her hisse %10 ağırlık)\n"
+    mesaj += "━━━━━━━━━━━━━━━━━━━━\n"
+    
+    toplam_risk = 0
     for i, (_, row) in enumerate(top10.iterrows(), 1):
         sembol = row["Sembol"]
         skor = row["Momentum"]
-        getiri_6 = row["6 Ay %"]
-        mesaj += "{:2}. {:6} | Skor: {:5.1f} | 6A: {:+6.1f}%\n".format(i, sembol, skor, getiri_6)
+        getiri_3 = row.get("3 Ay %", 0)
+        getiri_6 = row.get("6 Ay %", 0)
+        getiri_12 = row.get("12 Ay %", 0)
+        
+        # Fiyat bilgisi
+        f_info = fiyat_dict.get(sembol, {})
+        kapanis = f_info.get("kapanis", 0)
+        ort_30 = f_info.get("ort_30", 0)
+        volatilite = f_info.get("volatilite", 0)
+        
+        # Risk hesapla
+        risk_skor, risk_gosterge = risk_seviyesi_hesapla(row, f_info)
+        toplam_risk += risk_skor
+        
+        # Trend yonu (kapanis vs 30-gun ort)
+        if kapanis > 0 and ort_30 > 0:
+            fark_yuzde = ((kapanis - ort_30) / ort_30) * 100
+            if fark_yuzde > 5:
+                trend = "⬆️"
+            elif fark_yuzde < -5:
+                trend = "⬇️"
+            else:
+                trend = "➡️"
+        else:
+            trend = "➡️"
+        
+        # Volatilite seviyesi
+        if volatilite > 5:
+            vol_str = "Yüksek"
+        elif volatilite > 3:
+            vol_str = "Orta"
+        else:
+            vol_str = "Düşük"
+        
+        # Hisse blogu
+        mesaj += f"\n<b>▸ {i}. {sembol}</b> {trend}\n"
+        if kapanis > 0:
+            mesaj += f"   💵 Kapanış: ${kapanis:.2f}\n"
+            mesaj += f"   📊 30g ort: ${ort_30:.2f}\n"
+            min_p = min(kapanis, ort_30)
+            max_p = max(kapanis, ort_30)
+            mesaj += f"   🎯 Aralık: ${min_p:.2f} - ${max_p:.2f}\n"
+        mesaj += f"   ⚡ Skor: {skor:.1f} | 6A: {getiri_6:+.0f}% | 12A: {getiri_12:+.0f}%\n"
+        mesaj += f"   🌡️ Volatilite: {vol_str} ({volatilite:.1f}%)\n"
+        mesaj += f"   {risk_gosterge}\n"
     
-    mesaj += "</pre>\n"
-    mesaj += "📅 Veri tarihi: " + tarih.strftime("%Y-%m-%d") + "\n"
-    mesaj += "📊 Ortalama 6A getiri: {:+.1f}%\n".format(top10["6 Ay %"].mean())
-    mesaj += "📈 Ortalama 12A getiri: {:+.1f}%".format(top10["12 Ay %"].mean())
+    # Portfoy ozeti
+    ort_risk = toplam_risk / len(top10)
+    mesaj += "\n━━━━━━━━━━━━━━━━━━━━\n"
+    mesaj += "<b>📈 Portföy Özeti</b>\n"
+    mesaj += f"  • Ortalama skor: {top10['Momentum'].mean():.1f}/100\n"
+    mesaj += f"  • Ortalama 6A: {top10['6 Ay %'].mean():+.0f}%\n"
+    mesaj += f"  • Ortalama 12A: {top10['12 Ay %'].mean():+.0f}%\n"
+    mesaj += f"  • Ortalama risk: {ort_risk:.1f}/5\n"
+    
+    if ort_risk >= 3.5:
+        mesaj += "  ⚠️ <b>YÜKSEK RİSK</b> - dikkatli ol\n"
+    elif ort_risk >= 2.5:
+        mesaj += "  ⚠️ Orta-yüksek risk\n"
+    
+    mesaj += "\n"
+    mesaj += f"📅 Veri tarihi: {tarih.strftime('%Y-%m-%d')}\n"
+    mesaj += f"⏳ Geçerli: 1-30 {ay_adi}\n"
+    mesaj += f"🔄 Sonraki: 1 {sonraki_ay} 09:00\n\n"
+    mesaj += "<i>⚠️ Yatırım tavsiyesi değildir. Geçmiş performans gelecek garantisi vermez.</i>"
     
     return mesaj
 
@@ -220,7 +383,9 @@ def main():
         
         # Adim 4: Telegram bildirim
         print("\n[4/4] Telegram bildirimi gonderiliyor...")
-        telegram_mesaji = telegram_mesaji_olustur(top10, aylik.index[-1])
+        telegram_mesaji = telegram_mesaji_olustur(top10, aylik.index[-1], 
+                                                    gunluk_fiyatlar=fiyatlar,
+                                                    aylik_fiyatlar=aylik)
         telegram_basarili = telegram_gonder(telegram_mesaji)
         
         if not telegram_basarili:
