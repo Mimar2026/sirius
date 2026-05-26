@@ -1,10 +1,7 @@
 """
 Sirius QUALITY - Quality Momentum (ABD)
 
-Momentum + Quality faktorlerin birlestirildigi versiyon.
-ROE, Brut Marj, Kar Buyumesi filtresi.
-
-Sirius: A signal arrives before the rise.
+Momentum + ROE + Brut Marj + Kar Buyumesi. Performans takipli.
 """
 
 import os
@@ -27,11 +24,22 @@ from sirius_helpers import (
     telegram_mesaji_detayli,
     PORTFOY_ABD,
     POZISYON_YUZDE_ABD,
+    AY_ISIMLERI,
+)
+
+from performans_tracker import (
+    gecmis_oku,
+    gecmis_kaydet,
+    onceki_portfoy_performans_hesapla,
+    kumulatif_performans_hesapla,
+    yeni_kayit_olustur,
 )
 
 
+SISTEM_KODU = "quality"
+
+
 def fundamental_veri_cek(semboller):
-    """yfinance'ten fundamental veri ceker."""
     fundamentals = {}
     for sembol in semboller:
         try:
@@ -61,7 +69,6 @@ def fundamental_veri_cek(semboller):
 
 
 def quality_skoru_hesapla(skor_df, fundamentals):
-    """Momentum + Quality kompozit skoru hesaplar."""
     fundamental_list = []
     for _, row in skor_df.iterrows():
         sembol = row["Sembol"]
@@ -115,7 +122,6 @@ def quality_skoru_hesapla(skor_df, fundamentals):
 
 
 def quality_ek_bilgi_olustur(top10):
-    """Quality'ye ozel ek istatistikleri olusturur (mesaj sonuna eklenir)."""
     ek = "<b>💎 Quality Metrikleri:</b>\n"
     
     if "ROE" in top10.columns:
@@ -131,51 +137,67 @@ def quality_ek_bilgi_olustur(top10):
     if "Quality" in top10.columns:
         ort_quality = top10["Quality"].dropna().mean()
         if not pd.isna(ort_quality):
-            ek += f"   • Ortalama Quality skoru: {ort_quality:.1f}/100\n"
+            ek += f"   • Ortalama Quality: {ort_quality:.1f}/100\n"
     
     if "Final" in top10.columns:
         ort_final = top10["Final"].dropna().mean()
         if not pd.isna(ort_final):
-            ek += f"   • Ortalama Final skor: {ort_final:.1f}/100"
+            ek += f"   • Ortalama Final: {ort_final:.1f}/100"
     
     return ek
 
 
 def main():
     print("=" * 70)
-    print("SIRIUS QUALITY - QUALITY MOMENTUM")
-    print("A signal arrives before the rise.")
+    print("SIRIUS QUALITY - Performans Takipli")
     print("=" * 70)
     
     try:
+        # Gecmisi oku
+        print("\n[0/6] Gecmis okunuyor...")
+        gecmis = gecmis_oku(SISTEM_KODU, portfoy_baslangic=PORTFOY_ABD, para_birimi="$")
+        print(f"  {len(gecmis['kayitlar'])} onceki kayit var")
+        
         # Adim 1: Hisse evreni
-        print("\n[1/5] Hisse evreni cekiliyor...")
-        semboller = retry(
-            hisse_evrenini_cek,
-            max_deneme=3,
-            bekleme=10,
-            adim_adi="Hisse evreni cekme"
-        )
+        print("\n[1/6] Hisse evreni cekiliyor...")
+        semboller = retry(hisse_evrenini_cek, max_deneme=3, bekleme=10, adim_adi="Hisse evreni")
         print("  " + str(len(semboller)) + " hisse")
         
         # Adim 2: Fiyat verisi
-        print("\n[2/5] Fiyat verisi cekiliyor (1-2 dakika)...")
-        fiyatlar = retry(
-            lambda: fiyat_verisi_cek(semboller),
-            max_deneme=3,
-            bekleme=15,
-            adim_adi="Fiyat verisi cekme"
-        )
+        print("\n[2/6] Fiyat verisi cekiliyor...")
+        fiyatlar = retry(lambda: fiyat_verisi_cek(semboller), max_deneme=3, bekleme=15, adim_adi="Fiyat verisi")
         aylik = aylik_fiyatlara_donustur(fiyatlar)
         print("  " + str(aylik.shape[1]) + " hisse / " + str(aylik.shape[0]) + " ay")
         
-        # Adim 3: Momentum hesapla (top 50)
-        print("\n[3/5] Momentum hesaplaniyor...")
+        # Adim 3: Onceki portfoyun performansi
+        print("\n[3/6] Onceki portfoyun performansi hesaplaniyor...")
+        if gecmis["kayitlar"]:
+            onceki_kayit = gecmis["kayitlar"][-1]
+            
+            guncel_fiyatlar = {}
+            for hisse in onceki_kayit.get("hisseler", []):
+                sembol = hisse["sembol"]
+                if sembol in aylik.columns:
+                    son_fiyat = aylik[sembol].iloc[-1]
+                    if pd.notna(son_fiyat):
+                        guncel_fiyatlar[sembol] = float(son_fiyat)
+            
+            performans = onceki_portfoy_performans_hesapla(onceki_kayit, guncel_fiyatlar)
+            if performans:
+                onceki_kayit["onceki_ay_performans"] = performans
+                print(f"  Onceki ay getirisi: {performans['aylik_getiri_pct']:+.2f}%")
+        else:
+            print("  Henuz onceki kayit yok.")
+        
+        kumulatif = kumulatif_performans_hesapla(gecmis)
+        
+        # Adim 4: Momentum hesapla (top 50)
+        print("\n[4/6] Momentum hesaplaniyor...")
         skor = momentum_skoru_hesapla(aylik)
         top50 = skor.head(50)
         
-        # Adim 4: Fundamental veriler
-        print("\n[4/5] Fundamental veri cekiliyor (~1 dakika)...")
+        # Adim 5: Fundamental veriler + Quality skor
+        print("\n[5/6] Fundamental veri cekiliyor...")
         fundamentals = fundamental_veri_cek(top50["Sembol"].tolist())
         
         ranked = quality_skoru_hesapla(top50, fundamentals)
@@ -200,17 +222,40 @@ def main():
         print(top10[gosterim_kolonlari].round(2).to_string(index=False))
         print("\nSemboller: " + ", ".join(top10["Sembol"].tolist()))
         
-        # Sektor dict (mesaja eklemek icin)
+        # Sektor dict
         sektor_dict = {}
         if "Sektor" in top10.columns:
             for _, row in top10.iterrows():
                 sektor_dict[row["Sembol"]] = row.get("Sektor", "Unknown")
         
-        # Ek bilgi (Quality metrikleri)
+        # Ek bilgi
         ek_bilgi = quality_ek_bilgi_olustur(top10)
         
-        # Adim 5: Telegram - detayli mesaj
-        print("\n[5/5] Telegram bildirimi gonderiliyor...")
+        # Yeni kayit
+        guncel_portfoy_buyuklugu = kumulatif.get("portfoy_guncel", PORTFOY_ABD)
+        
+        kapanis_dict = {}
+        for sembol in top10["Sembol"]:
+            if sembol in aylik.columns:
+                kapanis_dict[sembol] = float(aylik[sembol].iloc[-1])
+        
+        veri_tarih = aylik.index[-1]
+        if veri_tarih.month == 12:
+            sonraki_ay_adi = f"Ocak {veri_tarih.year + 1}"
+        else:
+            sonraki_ay_adi = f"{AY_ISIMLERI[veri_tarih.month + 1]} {veri_tarih.year}"
+        
+        yeni_kayit = yeni_kayit_olustur(
+            top10, kapanis_dict, veri_tarih, sonraki_ay_adi,
+            guncel_portfoy_buyuklugu, POZISYON_YUZDE_ABD
+        )
+        
+        gecmis["kayitlar"].append(yeni_kayit)
+        gecmis_kaydet(SISTEM_KODU, gecmis)
+        print(f"  Gecmise kaydedildi: gecmis/{SISTEM_KODU}.json")
+        
+        # Adim 6: Telegram
+        print("\n[6/6] Telegram bildirimi gonderiliyor...")
         telegram_mesaji = telegram_mesaji_detayli(
             top_n_df=top10,
             tarih=aylik.index[-1],
@@ -223,7 +268,9 @@ def main():
             pozisyon_yuzde=POZISYON_YUZDE_ABD,
             para_format=",.2f",
             sektor_dict=sektor_dict if sektor_dict else None,
-            ek_bilgi=ek_bilgi
+            ek_bilgi=ek_bilgi,
+            performans_bilgisi=kumulatif,
+            gecmis_veri=gecmis
         )
         
         telegram_basarili = telegram_gonder(telegram_mesaji)
@@ -243,7 +290,7 @@ def main():
         print(hata_detayi)
         
         try:
-            telegram_hata_gonder("Sirius QUALITY Aylik Calistirma", str(e))
+            telegram_hata_gonder("Sirius QUALITY", str(e))
         except:
             print("Telegram hata bildirimi de gonderilemedi.")
         
