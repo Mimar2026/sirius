@@ -1,10 +1,7 @@
 """
 Sirius DIVERSE - Sektor Cesitlendirmeli Momentum (ABD)
 
-Aynı momentum mantigi + sektor cesitlendirme filtresi.
-Her sektorden maksimum 3 hisse alir.
-
-Sirius: A signal arrives before the rise.
+Her sektorden maksimum 3 hisse. Performans takipli.
 """
 
 import os
@@ -27,11 +24,22 @@ from sirius_helpers import (
     telegram_mesaji_detayli,
     PORTFOY_ABD,
     POZISYON_YUZDE_ABD,
+    AY_ISIMLERI,
+)
+
+from performans_tracker import (
+    gecmis_oku,
+    gecmis_kaydet,
+    onceki_portfoy_performans_hesapla,
+    kumulatif_performans_hesapla,
+    yeni_kayit_olustur,
 )
 
 
+SISTEM_KODU = "diverse"
+
+
 def sektor_bilgisi_cek(semboller):
-    """yfinance'ten sektor bilgisi ceker."""
     sektorler = {}
     for sembol in semboller:
         try:
@@ -45,7 +53,6 @@ def sektor_bilgisi_cek(semboller):
 
 
 def sektor_cesitlendirme_uygula(skor_df, sektor_dict, top_n=10, max_sektor=3):
-    """Sektor cesitlendirme uygular."""
     sektor_sayilari = {}
     secilen_hisseler = []
     
@@ -67,42 +74,57 @@ def sektor_cesitlendirme_uygula(skor_df, sektor_dict, top_n=10, max_sektor=3):
 
 def main():
     print("=" * 70)
-    print("SIRIUS DIVERSE - SEKTOR CESITLENDIRMELI MOMENTUM")
-    print("A signal arrives before the rise.")
+    print("SIRIUS DIVERSE - Sektor Cesitlendirmeli Momentum - Performans Takipli")
     print("=" * 70)
     
     try:
+        # Gecmisi oku
+        print("\n[0/6] Gecmis okunuyor...")
+        gecmis = gecmis_oku(SISTEM_KODU, portfoy_baslangic=PORTFOY_ABD, para_birimi="$")
+        print(f"  {len(gecmis['kayitlar'])} onceki kayit var")
+        
         # Adim 1: Hisse evreni
-        print("\n[1/5] Hisse evreni cekiliyor...")
-        semboller = retry(
-            hisse_evrenini_cek,
-            max_deneme=3,
-            bekleme=10,
-            adim_adi="Hisse evreni cekme"
-        )
+        print("\n[1/6] Hisse evreni cekiliyor...")
+        semboller = retry(hisse_evrenini_cek, max_deneme=3, bekleme=10, adim_adi="Hisse evreni")
         print("  " + str(len(semboller)) + " hisse")
         
         # Adim 2: Fiyat verisi
-        print("\n[2/5] Fiyat verisi cekiliyor (1-2 dakika)...")
-        fiyatlar = retry(
-            lambda: fiyat_verisi_cek(semboller),
-            max_deneme=3,
-            bekleme=15,
-            adim_adi="Fiyat verisi cekme"
-        )
+        print("\n[2/6] Fiyat verisi cekiliyor...")
+        fiyatlar = retry(lambda: fiyat_verisi_cek(semboller), max_deneme=3, bekleme=15, adim_adi="Fiyat verisi")
         aylik = aylik_fiyatlara_donustur(fiyatlar)
         print("  " + str(aylik.shape[1]) + " hisse / " + str(aylik.shape[0]) + " ay")
         
-        # Adim 3: Momentum hesapla (top 50)
-        print("\n[3/5] Momentum hesaplaniyor...")
+        # Adim 3: Onceki portfoyun performansi
+        print("\n[3/6] Onceki portfoyun performansi hesaplaniyor...")
+        if gecmis["kayitlar"]:
+            onceki_kayit = gecmis["kayitlar"][-1]
+            
+            guncel_fiyatlar = {}
+            for hisse in onceki_kayit.get("hisseler", []):
+                sembol = hisse["sembol"]
+                if sembol in aylik.columns:
+                    son_fiyat = aylik[sembol].iloc[-1]
+                    if pd.notna(son_fiyat):
+                        guncel_fiyatlar[sembol] = float(son_fiyat)
+            
+            performans = onceki_portfoy_performans_hesapla(onceki_kayit, guncel_fiyatlar)
+            if performans:
+                onceki_kayit["onceki_ay_performans"] = performans
+                print(f"  Onceki ay getirisi: {performans['aylik_getiri_pct']:+.2f}%")
+        else:
+            print("  Henuz onceki kayit yok.")
+        
+        kumulatif = kumulatif_performans_hesapla(gecmis)
+        
+        # Adim 4: Momentum hesapla (top 50)
+        print("\n[4/6] Momentum hesaplaniyor...")
         skor = momentum_skoru_hesapla(aylik)
         top50 = skor.head(50)
         
-        # Adim 4: Sektor bilgisi (50 hisse)
-        print("\n[4/5] Sektor bilgisi cekiliyor (~30 saniye)...")
+        # Adim 5: Sektor bilgisi
+        print("\n[5/6] Sektor bilgisi cekiliyor...")
         sektor_dict = sektor_bilgisi_cek(top50["Sembol"].tolist())
         
-        # Sektor cesitlendirme uygula
         top10 = sektor_cesitlendirme_uygula(top50, sektor_dict, top_n=10, max_sektor=3)
         
         print("\n" + "=" * 70)
@@ -113,8 +135,31 @@ def main():
         print(gosterim.round(2).to_string(index=False))
         print("\nSemboller: " + ", ".join(top10["Sembol"].tolist()))
         
-        # Adim 5: Telegram - detayli mesaj (sektor bilgisi ile)
-        print("\n[5/5] Telegram bildirimi gonderiliyor...")
+        # Yeni kayit
+        guncel_portfoy_buyuklugu = kumulatif.get("portfoy_guncel", PORTFOY_ABD)
+        
+        kapanis_dict = {}
+        for sembol in top10["Sembol"]:
+            if sembol in aylik.columns:
+                kapanis_dict[sembol] = float(aylik[sembol].iloc[-1])
+        
+        veri_tarih = aylik.index[-1]
+        if veri_tarih.month == 12:
+            sonraki_ay_adi = f"Ocak {veri_tarih.year + 1}"
+        else:
+            sonraki_ay_adi = f"{AY_ISIMLERI[veri_tarih.month + 1]} {veri_tarih.year}"
+        
+        yeni_kayit = yeni_kayit_olustur(
+            top10, kapanis_dict, veri_tarih, sonraki_ay_adi,
+            guncel_portfoy_buyuklugu, POZISYON_YUZDE_ABD
+        )
+        
+        gecmis["kayitlar"].append(yeni_kayit)
+        gecmis_kaydet(SISTEM_KODU, gecmis)
+        print(f"  Gecmise kaydedildi: gecmis/{SISTEM_KODU}.json")
+        
+        # Adim 6: Telegram
+        print("\n[6/6] Telegram bildirimi gonderiliyor...")
         telegram_mesaji = telegram_mesaji_detayli(
             top_n_df=top10,
             tarih=aylik.index[-1],
@@ -126,7 +171,9 @@ def main():
             portfoy_buyuklugu=PORTFOY_ABD,
             pozisyon_yuzde=POZISYON_YUZDE_ABD,
             para_format=",.2f",
-            sektor_dict=sektor_dict
+            sektor_dict=sektor_dict,
+            performans_bilgisi=kumulatif,
+            gecmis_veri=gecmis
         )
         
         telegram_basarili = telegram_gonder(telegram_mesaji)
