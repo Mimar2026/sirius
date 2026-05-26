@@ -1,0 +1,52 @@
+{
+  "sistem_kodu": "bist_katilim",
+  "portfoy_baslangic": 100000,
+  "para_birimi": "₺",
+  "olusturma_tarihi": "2026-05-26",
+  "kayitlar": [
+    {
+      "tarih": "2026-05-31",
+      "ay_adi": "Haziran 2026",
+      "portfoy_buyuklugu": 100000,
+      "pozisyon_yuzde": 20,
+      "hisseler": [
+        {
+          "sembol": "KTLEV",
+          "giris_fiyat": 118.0,
+          "lot": 169.4915,
+          "tutar": 20000.0,
+          "skor": 99.7
+        },
+        {
+          "sembol": "OZATD",
+          "giris_fiyat": 1245.0,
+          "lot": 16.0643,
+          "tutar": 20000.0,
+          "skor": 99.4
+        },
+        {
+          "sembol": "GUNDG",
+          "giris_fiyat": 1067.0,
+          "lot": 18.7441,
+          "tutar": 20000.0,
+          "skor": 98.8
+        },
+        {
+          "sembol": "KRDMB",
+          "giris_fiyat": 100.0,
+          "lot": 200.0,
+          "tutar": 20000.0,
+          "skor": 97.91
+        },
+        {
+          "sembol": "BURVA",
+          "giris_fiyat": 1134.0,
+          "lot": 17.6367,
+          "tutar": 20000.0,
+          "skor": 96.71
+        }
+      ],
+      "kayit_zamani": "2026-05-26 15:39:47"
+    }
+  ]
+}
