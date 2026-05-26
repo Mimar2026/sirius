@@ -1,20 +1,19 @@
 """
 Sirius - Ortak Yardimci Fonksiyonlar
 
-Bu dosya tum sistemlerin (ABD ve BIST) ortak kullandigi:
+Bu dosya tum sistemlerin ortak kullandigi:
 - Risk hesaplama
 - Hedef/stop fiyat hesaplama
 - Portfoy bilgisi
-- Detayli Telegram mesaji olusturma
-
-icin yardimci fonksiyonlari icerir.
+- Detayli Telegram mesaji olusturma (performans dahil)
 """
 
 import pandas as pd
+from performans_tracker import performans_metni_olustur
 
 
 # ====================================================================
-# PORTFOY BUYUKLUKLERI (sabit, bakiye guncellemesi icin buradan degistir)
+# PORTFOY BUYUKLUKLERI
 # ====================================================================
 
 PORTFOY_ABD = 10000      # USD - her ABD sistemi icin
@@ -81,14 +80,12 @@ def hedef_ve_stop_hesapla(row, kapanis):
     
     skor = row.get("Momentum", 0)
     
-    # Hedef
     if skor > 99.5:
         hedef_yuzde = 30
     else:
         hedef_yuzde = 25
     hedef = kapanis * (1 + hedef_yuzde / 100)
     
-    # Stop
     stop_yuzde = 15
     stop = kapanis * (1 - stop_yuzde / 100)
     
@@ -137,17 +134,7 @@ def risk_seviyesi_hesapla(row, fiyat_bilgi=None):
 
 
 def alim_miktari_hesapla(portfoy_buyuklugu, pozisyon_yuzde, kapanis):
-    """
-    Her hisse icin net alim miktarini hesaplar.
-    
-    Args:
-        portfoy_buyuklugu: Toplam portfoy (USD veya TL)
-        pozisyon_yuzde: Hisse basina yuzde (ABD %10, BIST %20)
-        kapanis: Hisse kapanis fiyati
-    
-    Returns:
-        (tutar, hisse_adedi) tuple
-    """
+    """Her hisse icin net alim miktarini hesaplar."""
     if kapanis is None or kapanis <= 0:
         return None, None
     
@@ -167,29 +154,21 @@ def telegram_mesaji_detayli(
     para_birimi="$",
     portfoy_buyuklugu=10000,
     pozisyon_yuzde=10,
-    para_format=",.0f",
+    para_format=",.2f",
     sektor_dict=None,
-    ek_bilgi=None
+    ek_bilgi=None,
+    performans_bilgisi=None,
+    gecmis_veri=None
 ):
     """
-    Detayli aksiyon mesaji olusturur.
+    Detayli aksiyon mesaji olusturur (performans dahil).
     
     Args:
-        top_n_df: Secilen hisseler DataFrame
-        tarih: Veri tarihi
-        sistem_adi: "Saf Momentum", "BIST Katilim" vb.
-        sistem_emoji: "🌟", "🇹🇷" vb.
-        gunluk_fiyatlar: Gunluk fiyat verisi (volatilite icin)
-        aylik_fiyatlar: Aylik fiyat verisi
-        para_birimi: "$" veya "₺"
-        portfoy_buyuklugu: 10000 (USD) veya 100000 (TL)
-        pozisyon_yuzde: 10 (ABD) veya 20 (BIST)
-        para_format: ",.0f" (TL icin) veya ",.2f" ($ icin)
-        sektor_dict: Sektor bilgisi (varsa)
-        ek_bilgi: Ek satir (Quality skoru gibi)
+        performans_bilgisi: kumulatif_performans_hesapla() sonucu
+        gecmis_veri: gecmis_oku() sonucu
+        ...digerleri aynı
     """
     # Tarih veri tarihidir. Portfoy SONRAKI ay icin gecerli.
-    # Ornegin Mayis 31 verisi -> Haziran ayi portfoyu
     if tarih.month == 12:
         portfoy_ay = 1
         portfoy_yil = tarih.year + 1
@@ -200,7 +179,6 @@ def telegram_mesaji_detayli(
     ay_adi = AY_ISIMLERI[portfoy_ay]
     yil = portfoy_yil
     
-    # Sonraki ay (gecerlilik bitisi icin)
     if portfoy_ay == 12:
         sonraki_ay = "Ocak"
     else:
@@ -215,11 +193,35 @@ def telegram_mesaji_detayli(
     # Mesaj basi
     mesaj = f"<b>{sistem_emoji} SIRIUS {sistem_adi} - {ay_adi} {yil}</b>\n"
     mesaj += "<i>A signal arrives before the rise.</i>\n\n"
-    mesaj += f"<b>💰 Portföy: {para_birimi}{portfoy_buyuklugu:{para_format}}</b>\n"
-    mesaj += f"<b>📊 Top {len(top_n_df)} Hisse</b> (her hisse %{pozisyon_yuzde} = {para_birimi}{pozisyon_tutar:{para_format}})\n"
+    
+    # PERFORMANS BOLUMU (varsa)
+    if performans_bilgisi and performans_bilgisi.get("kayit_var") and gecmis_veri:
+        performans_metni = performans_metni_olustur(
+            performans_bilgisi, 
+            gecmis_veri, 
+            para_birimi, 
+            para_format
+        )
+        if performans_metni:
+            mesaj += performans_metni + "\n\n"
+    
+    # PORTFOY BAKIYE
+    if performans_bilgisi and performans_bilgisi.get("kayit_var"):
+        guncel_deger = performans_bilgisi.get("portfoy_guncel", portfoy_buyuklugu)
+        mesaj += f"<b>💰 Mevcut bakiye: {para_birimi}{guncel_deger:{para_format}}</b>\n"
+        mesaj += f"<b>📊 Yeni Top {len(top_n_df)} Hisse</b> (her hisse %{pozisyon_yuzde})\n"
+    else:
+        mesaj += f"<b>💰 Portföy: {para_birimi}{portfoy_buyuklugu:{para_format}}</b>\n"
+        mesaj += f"<b>📊 Top {len(top_n_df)} Hisse</b> (her hisse %{pozisyon_yuzde} = {para_birimi}{pozisyon_tutar:{para_format}})\n"
+    
     mesaj += "━━━━━━━━━━━━━━━━━━━━\n"
     
     toplam_risk = 0
+    
+    # Pozisyon tutarini guncel bakiyeye gore yenile
+    if performans_bilgisi and performans_bilgisi.get("kayit_var"):
+        guncel_deger = performans_bilgisi.get("portfoy_guncel", portfoy_buyuklugu)
+        pozisyon_tutar = guncel_deger * (pozisyon_yuzde / 100)
     
     for i, (_, row) in enumerate(top_n_df.iterrows(), 1):
         sembol = row["Sembol"]
@@ -258,8 +260,12 @@ def telegram_mesaji_detayli(
         # Hedef ve stop
         hedef, hedef_p, stop, stop_p = hedef_ve_stop_hesapla(row, kapanis)
         
-        # Alim miktari
-        tutar, hisse_adedi = alim_miktari_hesapla(portfoy_buyuklugu, pozisyon_yuzde, kapanis)
+        # Alim miktari (guncel bakiyeye gore)
+        tutar, hisse_adedi = alim_miktari_hesapla(
+            performans_bilgisi.get("portfoy_guncel", portfoy_buyuklugu) if performans_bilgisi and performans_bilgisi.get("kayit_var") else portfoy_buyuklugu,
+            pozisyon_yuzde,
+            kapanis
+        )
         
         # Hisse blogu
         mesaj += f"\n<b>▸ {i}. {sembol}</b> {trend}"
@@ -293,7 +299,7 @@ def telegram_mesaji_detayli(
     # Portfoy ozeti
     ort_risk = toplam_risk / len(top_n_df)
     mesaj += "\n━━━━━━━━━━━━━━━━━━━━\n"
-    mesaj += "<b>📈 Portföy Özeti</b>\n"
+    mesaj += "<b>📈 Yeni Portföy Özeti</b>\n"
     mesaj += f"   • Ortalama skor: {top_n_df['Momentum'].mean():.1f}/100\n"
     mesaj += f"   • Ortalama 6A: {top_n_df['6 Ay %'].mean():+.0f}%\n"
     
@@ -318,18 +324,14 @@ def telegram_mesaji_detayli(
         for sektor, sayi in sorted(sektor_dagilimi.items(), key=lambda x: -x[1]):
             mesaj += f"   • {sektor}: {sayi}\n"
     
-    # Ek bilgi (Quality icin ROE vs.)
+    # Ek bilgi (Quality icin)
     if ek_bilgi:
         mesaj += f"\n{ek_bilgi}\n"
     
-    # Footer
-    mesaj += "\n"
-    mesaj += f"📅 Veri: {tarih.strftime('%Y-%m-%d')}\n"
     # Portfoy ayinin son gunu
     if portfoy_ay in [1, 3, 5, 7, 8, 10, 12]:
         son_gun = 31
     elif portfoy_ay == 2:
-        # Subat - artik yil kontrolu
         if (portfoy_yil % 4 == 0 and portfoy_yil % 100 != 0) or (portfoy_yil % 400 == 0):
             son_gun = 29
         else:
@@ -337,6 +339,9 @@ def telegram_mesaji_detayli(
     else:
         son_gun = 30
     
+    # Footer
+    mesaj += "\n"
+    mesaj += f"📅 Veri: {tarih.strftime('%Y-%m-%d')}\n"
     mesaj += f"⏳ Geçerli: 1-{son_gun} {ay_adi}\n"
     mesaj += f"🔄 Sonraki: 1 {sonraki_ay} 09:00\n\n"
     mesaj += "<i>⚠️ Yatırım tavsiyesi değildir. Geçmiş performans gelecek garantisi vermez.</i>"
