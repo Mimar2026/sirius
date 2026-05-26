@@ -188,13 +188,23 @@ def telegram_mesaji_detayli(
         sektor_dict: Sektor bilgisi (varsa)
         ek_bilgi: Ek satir (Quality skoru gibi)
     """
-    ay_adi = AY_ISIMLERI[tarih.month]
-    yil = tarih.year
-    
+    # Tarih veri tarihidir. Portfoy SONRAKI ay icin gecerli.
+    # Ornegin Mayis 31 verisi -> Haziran ayi portfoyu
     if tarih.month == 12:
+        portfoy_ay = 1
+        portfoy_yil = tarih.year + 1
+    else:
+        portfoy_ay = tarih.month + 1
+        portfoy_yil = tarih.year
+    
+    ay_adi = AY_ISIMLERI[portfoy_ay]
+    yil = portfoy_yil
+    
+    # Sonraki ay (gecerlilik bitisi icin)
+    if portfoy_ay == 12:
         sonraki_ay = "Ocak"
     else:
-        sonraki_ay = AY_ISIMLERI[tarih.month + 1]
+        sonraki_ay = AY_ISIMLERI[portfoy_ay + 1]
     
     # Fiyat hesapla
     fiyat_dict = son_fiyat_ve_ortalama_hesapla(aylik_fiyatlar, gunluk_fiyatlar) if (gunluk_fiyatlar is not None or aylik_fiyatlar is not None) else {}
@@ -315,7 +325,19 @@ def telegram_mesaji_detayli(
     # Footer
     mesaj += "\n"
     mesaj += f"📅 Veri: {tarih.strftime('%Y-%m-%d')}\n"
-    mesaj += f"⏳ Geçerli: 1-{'31' if tarih.month in [1,3,5,7,8,10,12] else '30' if tarih.month != 2 else '28'} {ay_adi}\n"
+    # Portfoy ayinin son gunu
+    if portfoy_ay in [1, 3, 5, 7, 8, 10, 12]:
+        son_gun = 31
+    elif portfoy_ay == 2:
+        # Subat - artik yil kontrolu
+        if (portfoy_yil % 4 == 0 and portfoy_yil % 100 != 0) or (portfoy_yil % 400 == 0):
+            son_gun = 29
+        else:
+            son_gun = 28
+    else:
+        son_gun = 30
+    
+    mesaj += f"⏳ Geçerli: 1-{son_gun} {ay_adi}\n"
     mesaj += f"🔄 Sonraki: 1 {sonraki_ay} 09:00\n\n"
     mesaj += "<i>⚠️ Yatırım tavsiyesi değildir. Geçmiş performans gelecek garantisi vermez.</i>"
     
