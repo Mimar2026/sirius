@@ -1,16 +1,12 @@
 """
-Sirius BIST GENEL - Top 5 Saf Momentum (Katilim disi)
+Sirius BIST GENEL - Top 5 Saf Momentum (Tum BIST)
 
-Yoneticinin "katilim disi" sistemiyle birebir aynı parametreler:
-- Evren: BIST TUM (568 hisse) - katilim dahil
+Yoneticinin "katilim disi" sistemiyle birebir aynı:
+- Evren: BIST TUM (568 hisse)
 - Skor: 3+6+12 ay kompozit momentum
 - Top N: 5 hisse
 - Agirlik: Esit (%20 her)
 - Rebalans: Aylik
-
-NOT: "Katilim disi" demek katilim hisselerini ELEMEK demek degil.
-Yoneticinin sistemi BIST TUM evrenini kullaniyor, sadece "katilim
-uyumluluk filtresi" uygulamiyor. Bu nedenle BIST TUM kullaniyoruz.
 
 A signal arrives before the rise.
 """
@@ -19,10 +15,8 @@ import os
 import time
 import traceback
 import pandas as pd
-import requests
 from datetime import datetime, timedelta
 
-# Mevcut modullerden import
 from bist_hisseler import BIST_TUM
 from bist_data import coklu_fiyat_cek, aylik_fiyatlara_donustur
 from momentum_system import (
@@ -32,34 +26,11 @@ from momentum_system import (
     momentum_skoru_hesapla,
 )
 
-
-def telegram_mesaji_bist_genel(top5, tarih):
-    """BIST GENEL top 5 listesini Telegram mesajina cevirir."""
-    ay_isimleri = {
-        1: "Ocak", 2: "Subat", 3: "Mart", 4: "Nisan",
-        5: "Mayis", 6: "Haziran", 7: "Temmuz", 8: "Agustos",
-        9: "Eylul", 10: "Ekim", 11: "Kasim", 12: "Aralik"
-    }
-    ay_adi = ay_isimleri[tarih.month]
-    yil = tarih.year
-    
-    mesaj = "<b>🇹🇷 SIRIUS BIST GENEL - " + ay_adi + " " + str(yil) + "</b>\n"
-    mesaj += "<i>Tum BIST evreni top 5 momentum</i>\n\n"
-    mesaj += "<b>Top 5 Hisse:</b>\n"
-    mesaj += "<pre>"
-    
-    for i, (_, row) in enumerate(top5.iterrows(), 1):
-        sembol = row["Sembol"]
-        skor = row["Momentum"]
-        getiri_6 = row["6 Ay %"]
-        mesaj += "{:2}. {:6} | Skor: {:5.1f} | 6A: {:+7.1f}%\n".format(i, sembol, skor, getiri_6)
-    
-    mesaj += "</pre>\n"
-    mesaj += "📅 Veri: " + tarih.strftime("%Y-%m-%d") + "\n"
-    mesaj += "📊 Ortalama 6A: {:+.1f}%\n".format(top5["6 Ay %"].mean())
-    mesaj += "📈 Ortalama 12A: {:+.1f}%".format(top5["12 Ay %"].mean())
-    
-    return mesaj
+from sirius_helpers import (
+    telegram_mesaji_detayli,
+    PORTFOY_BIST,
+    POZISYON_YUZDE_BIST,
+)
 
 
 def main():
@@ -74,8 +45,8 @@ def main():
         semboller = BIST_TUM
         print(f"  {len(semboller)} hisse (BIST TUM)")
         
-        # Adim 2: Fiyat verisi cek
-        print("\n[2/4] Fiyat verisi cekiliyor (10-20 dakika - 568 hisse cok!)...")
+        # Adim 2: Fiyat verisi
+        print("\n[2/4] Fiyat verisi cekiliyor (10-20 dakika)...")
         bitis = datetime.now().strftime("%Y-%m-%d")
         baslangic = (datetime.now() - timedelta(days=450)).strftime("%Y-%m-%d")
         
@@ -109,9 +80,21 @@ def main():
         print(top5[["Sembol", "3 Ay %", "6 Ay %", "12 Ay %", "Momentum"]].round(2).to_string(index=False))
         print(f"\nSemboller: {', '.join(top5['Sembol'].tolist())}")
         
-        # Adim 4: Telegram
+        # Adim 4: Telegram - detayli mesaj (TL ile)
         print("\n[4/4] Telegram bildirimi gonderiliyor...")
-        telegram_mesaji = telegram_mesaji_bist_genel(top5, aylik.index[-1])
+        telegram_mesaji = telegram_mesaji_detayli(
+            top_n_df=top5,
+            tarih=aylik.index[-1],
+            sistem_adi="BIST GENEL",
+            sistem_emoji="🇹🇷",
+            gunluk_fiyatlar=fiyatlar,
+            aylik_fiyatlar=aylik,
+            para_birimi="₺",
+            portfoy_buyuklugu=PORTFOY_BIST,
+            pozisyon_yuzde=POZISYON_YUZDE_BIST,
+            para_format=",.2f"
+        )
+        
         telegram_basarili = telegram_gonder(telegram_mesaji)
         
         if not telegram_basarili:
