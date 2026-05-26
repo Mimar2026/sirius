@@ -2,18 +2,18 @@ name: Aylik Sirius Calistirmasi
 
 on:
   schedule:
-    # Her ayin 1'i, 06:00 UTC = 09:00 Turkiye saati
     - cron: '0 6 1 * *'
-  
-  # Manuel calistirma da mumkun olsun
   workflow_dispatch:
+
+# Workflow'a repo'ya yazma yetkisi ver
+permissions:
+  contents: write
 
 jobs:
   # ============================================
   # ABD SISTEMLERI
   # ============================================
   
-  # JOB 1: Saf Momentum (ABD)
   abd-momentum:
     runs-on: ubuntu-latest
     name: ABD - Saf Momentum
@@ -37,11 +37,20 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python momentum_system.py
+      
+      - name: Commit history changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add gecmis/momentum.json || true
+          git diff --staged --quiet || git commit -m "[auto] Momentum gecmis guncellendi"
+          git pull --rebase --autostash || true
+          git push || true
   
-  # JOB 2: Sektor Cesitlendirme (ABD)
   abd-diverse:
     runs-on: ubuntu-latest
     name: ABD - Sektor Diverse
+    needs: abd-momentum
     
     steps:
       - name: Checkout repository
@@ -62,11 +71,20 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python momentum_sector_diverse.py
+      
+      - name: Commit history changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add gecmis/diverse.json || true
+          git diff --staged --quiet || git commit -m "[auto] Diverse gecmis guncellendi"
+          git pull --rebase --autostash || true
+          git push || true
   
-  # JOB 3: Quality Momentum (ABD)
   abd-quality:
     runs-on: ubuntu-latest
     name: ABD - Quality Momentum
+    needs: abd-diverse
     
     steps:
       - name: Checkout repository
@@ -87,15 +105,24 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python momentum_quality.py
+      
+      - name: Commit history changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add gecmis/quality.json || true
+          git diff --staged --quiet || git commit -m "[auto] Quality gecmis guncellendi"
+          git pull --rebase --autostash || true
+          git push || true
   
   # ============================================
   # BIST SISTEMLERI
   # ============================================
   
-  # JOB 4: BIST KATILIM (Top 5)
   bist-katilim:
     runs-on: ubuntu-latest
     name: BIST - Katilim Top 5
+    needs: abd-quality
     timeout-minutes: 30
     
     steps:
@@ -117,11 +144,20 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python bist_momentum_katilim.py
+      
+      - name: Commit history changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add gecmis/bist_katilim.json || true
+          git diff --staged --quiet || git commit -m "[auto] BIST Katilim gecmis guncellendi"
+          git pull --rebase --autostash || true
+          git push || true
   
-  # JOB 5: BIST GENEL (Top 5)
   bist-genel:
     runs-on: ubuntu-latest
     name: BIST - Genel Top 5
+    needs: bist-katilim
     timeout-minutes: 45
     
     steps:
@@ -143,3 +179,12 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python bist_momentum_genel.py
+      
+      - name: Commit history changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add gecmis/bist_genel.json || true
+          git diff --staged --quiet || git commit -m "[auto] BIST Genel gecmis guncellendi"
+          git pull --rebase --autostash || true
+          git push || true
