@@ -12,146 +12,192 @@
   </a>
   <img src="https://img.shields.io/badge/python-3.11-blue.svg" alt="Python 3.11"/>
   <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License"/>
-  <img src="https://img.shields.io/badge/status-active-success.svg" alt="Active"/>
+  <img src="https://img.shields.io/badge/systems-5_parallel-success.svg" alt="5 Parallel Systems"/>
+  <img src="https://img.shields.io/badge/markets-US_+_BIST-orange.svg" alt="US + BIST"/>
 </p>
 
 ---
 
-# Sirius — Momentum Portföy Motoru
+# Sirius — Multi-Strategy Momentum Portföy Motoru
 
-ABD hisse senetleri için aylık çalışan momentum tabanlı portföy seçim sistemi. S&P 500 ve Nasdaq 100 evreninden her ay başında en güçlü momentum sergileyen 10 hisseyi seçer.
+ABD ve Türk hisse senedi piyasaları için aylık çalışan momentum tabanlı portföy seçim sistemi. **5 paralel strateji** her ay otomatik olarak top portföyleri seçer ve Telegram üzerinden bildirim gönderir.
 
-İsim Antik Mısır'da Nil'in taşmasını müjdeleyen Sirius yıldızından gelir. Gözlenebilir bir sinyal, sonraki bereketin habercisidir. Bu sistem de aynı mantıkla çalışır: her ay başında bir sinyal verir, ardından yükseliş gelir.
+İsim Antik Mısır'da Nil'in taşmasını müjdeleyen Sirius yıldızından gelir. Gözlenebilir bir sinyal, sonraki bereketin habercisidir. Sistem de aynı mantıkla çalışır: her ay başında bir sinyal verir, ardından yükseliş gelir.
+
+## Sistem Mimarisi
+SIRIUS - 5 Paralel Momentum Sistemi
+═══════════════════════════════════
+ABD Piyasası (S&P 500 + Nasdaq 100, ~516 hisse)
+├── 🌟 Saf Momentum         → Top 10 (en güçlü 10)
+├── 🌐 Sektör Diverse       → Top 10 (max 3 hisse/sektör)
+└── 💎 Quality Momentum     → Top 10 (momentum + ROE + marj)
+BIST (Borsa İstanbul)
+├── 🇹🇷 BIST Katılım        → Top 5 (237 katılım hissesi)
+└── 🇹🇷 BIST Genel          → Top 5 (568 BIST hisse)
+OTOMATİZASYON
+├── Her ayın 1'i 09:00 TSİ otomatik çalışır
+├── 5 paralel job, GitHub Actions
+├── 5 ayrı Telegram bildirimi
+├── Hata yakalama + retry mantığı
+└── Maliyet: $0
 
 ## Özellikler
 
-- 🤖 **Tam otonom** — GitHub Actions ile her ayın 1'i 09:00 TSİ otomatik çalışır
-- 📱 **Telegram entegrasyonu** — Top 10 listesi otomatik bildirim olarak gelir
-- 📊 **7 yıllık backtest** — Yıllık %63 bileşik getiri, 1,67 Sharpe oranı
-- 🌍 **Geniş evren** — ~516 hisse (S&P 500 ∪ Nasdaq 100)
-- 💰 **Sıfır maliyet** — Tüm bileşenler ücretsiz çalışır
+- **Tam otonom** — Her ayın 1'i 09:00 TSİ GitHub Actions üzerinde otomatik çalışır
+- **Çoklu strateji** — 5 farklı stratejinin paralel sonuçlarını alabilirsin
+- **İki pazar** — ABD ve BIST için ayrı sistemler
+- **Telegram entegrasyonu** — Anlık bildirim, otomatik mesaj
+- **Hibrit veri kaynağı** — BIST için borsapy + isyatirimhisse (failover)
+- **Hata yönetimi** — Retry mantığı + Telegram'a hata bildirimi
+- **Sıfır maliyet** — Tüm bileşenler ücretsiz
 
-## Özet İstatistikler (Backtest)
+## ABD Stratejileri (Backtest Sonuçları)
 
-| Metrik | Sirius Portföy | S&P 500 (SPY) |
-|---|---|---|
-| Toplam Getiri (6 yıl) | **%1.806** | %167 |
-| Yıllık Bileşik Getiri | **%63,44** | %17,80 |
-| Sharpe Oranı | **1,67** | 1,13 |
-| Maksimum Drawdown | **-%20,40** | -%23,93 |
-| Kazandıran Ay Oranı | **%65,28** | - |
+7 yıllık tarihsel veride 3 farklı ABD stratejisinin karşılaştırması:
+
+| Metrik | Saf Momentum | Sektör Diverse | Quality | S&P 500 |
+|---|---|---|---|---|
+| Toplam Getiri (6 yıl) | **%1.818** | %1.243 | %837 | %167 |
+| Yıllık Bileşik | **%63,62** | %54,17 | %45,20 | %17,75 |
+| Sharpe Oranı | 1,67 | 1,64 | **1,68** | 1,13 |
+| Maksimum Drawdown | -%20,40 | -%20,25 | **-%15,74** | -%23,93 |
+| Kazanma Oranı | %65,28 | %66,67 | **%75,00** | %66,67 |
 
 Backtest dönemi: 2020-06 → 2026-05 (72 ay)
 
-## Yıllık Getiri Dağılımı
+### Stratejilerin Karakteri
 
-| Yıl | Sirius | S&P 500 | Fark |
+- **Saf Momentum:** En yüksek getiri, en yüksek volatilite. Trend takip.
+- **Sektör Diverse:** Dengeli, çeşitlendirilmiş. Konsantrasyon riski düşük.
+- **Quality Momentum:** En düşük drawdown, en yüksek Sharpe. Risk-ayarlı şampiyon.
+
+## BIST Stratejileri
+
+| Strateji | Evren | Top N | Açıklama |
 |---|---|---|---|
-| 2020 | +%76,21 | +%24,42 | **+%51,79** |
-| 2021 | +%31,26 | +%28,73 | +%2,54 |
-| 2022 | +%10,66 | -%18,18 | **+%28,83** |
-| 2023 | +%39,94 | +%26,18 | +%13,76 |
-| 2024 | +%76,16 | +%24,89 | **+%51,28** |
-| 2025 | +%57,75 | +%17,72 | **+%40,03** |
-| 2026 (5 ay) | +%91,52 | +%9,93 | **+%81,58** |
-
-Sistemin en dikkat çekici özelliği 2022 ayı piyasasında pozitif getiri sağlaması. S&P 500 -%18 kaybederken Sirius +%10,66 kazandırdı. Bu, çoklu lookback (3+6+12 ay) yapısının trend dönüşlerini hızlı yakalamasından kaynaklanır.
+| **BIST Katılım** | 237 katılım hissesi | 5 | İslami finans uyumlu |
+| **BIST Genel** | 568 BIST hissesi | 5 | Tüm pazar evreni |
 
 ## Sistem Nasıl Çalışır
 
-### Evren
-- S&P 500 üyeleri (~503 hisse)
-- Nasdaq 100 üyeleri (~101 hisse)
-- Birleşik evren: ~516 hisse
-- Veri filtresi sonrası: ~500 hisse
+### Momentum Skoru Hesaplama
 
-### Skor Hesaplama
 Her ay sonunda her hisse için kompozit momentum skoru hesaplanır:
 
 1. Son 3 aylık getiri
 2. Son 6 aylık getiri
 3. Son 12 aylık getiri
 
-Her getiri yüzdelik dilime çevrilir, üçünün ortalaması alınır. En yüksek skorlu 10 hisse seçilir.
+Her getiri yüzdelik dilime çevrilir, üçünün ortalaması alınır. Bu skor sıralamasıyla top N hisse seçilir.
 
-### Portföy Kuralları
-- **Hisse sayısı:** 10
-- **Ağırlık:** Eşit (%10 her hisse)
-- **Rebalans:** Aylık (her ayın ilk işlem günü)
-- **Çıkış kuralı:** Skor sıralamasında ilk 10'un dışına çıkanlar elenir
+### Strateji Özelleştirmeleri
+
+**Saf Momentum:** Hiç filtre yok, ham sıralama
+**Sektör Diverse:** Her sektörden max 3 hisse
+**Quality:** Final skor = %60 momentum + %40 quality (ROE + brüt marj)
+**BIST Katılım/Genel:** Saf momentum, top 5 seçim
 
 ## Otomatik Çalıştırma
 
-Sistem **her ayın 1'i 09:00 Türkiye saatinde** otomatik olarak GitHub Actions üzerinde çalışır:
+Sistem her ayın 1'i 09:00 Türkiye saatinde GitHub Actions üzerinde **5 paralel job** olarak çalışır:
 
-1. GitHub sanal makinesinde Python 3.11 başlatılır
-2. Bağımlılıklar yüklenir
-3. Hisse evreni Wikipedia'dan çekilir
-4. Yahoo Finance üzerinden fiyat verisi indirilir
-5. Momentum skorları hesaplanır
-6. Top 10 hisse seçilir
-7. Telegram bot üzerinden bildirim gönderilir
+1. GitHub sanal makineleri başlatılır (5 adet, paralel)
+2. Bağımlılıklar yüklenir (yfinance, pandas, isyatirimhisse, borsapy vs.)
+3. Her sistem kendi evrenini ve veri kaynağını kullanır
+4. Top N hisseler seçilir
+5. Telegram bot üzerinden 5 ayrı bildirim gönderilir
 
-Tüm süreç ~3 dakika sürer ve kullanıcı müdahalesi gerektirmez.
+Tüm süreç ~15-30 dakika sürer ve kullanıcı müdahalesi gerektirmez.
 
 Workflow durumunu görmek için: [Actions sekmesi](https://github.com/Mimar2026/sirius/actions)
 
 ## Manuel Çalıştırma
 
-Bağımlılıkları yükle ve scripti çalıştır:
+Bağımlılıkları yükle ve istediğin scripti çalıştır:
 
     pip install -r requirements.txt
-    python momentum_system.py
-    python backtest.py
+    
+    # ABD sistemleri
+    python momentum_system.py              # Saf momentum
+    python momentum_sector_diverse.py      # Sektör diverse
+    python momentum_quality.py             # Quality momentum
+    
+    # BIST sistemleri
+    python bist_momentum_katilim.py        # BIST katılım
+    python bist_momentum_genel.py          # BIST genel
+    
+    # Backtest karşılaştırma
+    python backtest_compare.py             # 3 ABD stratejisi 7 yıllık karşılaştırma
 
 ## Telegram Bildirimi
 
-Telegram entegrasyonu için ortam değişkenlerini ayarla:
+Sistem her çalıştığında Telegram'a otomatik mesaj gönderir:
 
     export TELEGRAM_BOT_TOKEN="bot_tokeniniz"
     export TELEGRAM_CHAT_ID="chat_id_niz"
-    python momentum_system.py
 
-Bot kurulumu için [BotFather](https://t.me/BotFather) üzerinden bot oluştur ve token al.
+Bot kurulumu için [BotFather](https://t.me/BotFather).
+
+GitHub Actions kullanıyorsan token'ları **Repository Secrets** içinde saklamalısın.
 
 ## Dosya Yapısı
 
     sirius/
     ├── .github/workflows/
-    │   └── monthly_run.yml
+    │   └── monthly_run.yml              # Otomatik aylık çalıştırma
     ├── assets/
     │   ├── sirius_avatar.png
     │   ├── sirius_avatar_hd.png
     │   ├── sirius_banner.png
     │   └── ...
     ├── README.md
-    ├── momentum_system.py
-    ├── backtest.py
-    └── requirements.txt
+    ├── requirements.txt
+    │
+    │── ABD Sistemleri ──
+    ├── momentum_system.py               # Saf momentum
+    ├── momentum_sector_diverse.py       # Sektör çeşitlendirmeli
+    ├── momentum_quality.py              # Quality + momentum
+    ├── backtest.py                      # Tek strateji backtest
+    ├── backtest_compare.py              # 3 strateji karşılaştırma
+    │
+    │── BIST Sistemleri ──
+    ├── bist_hisseler.py                 # Hisse listeleri (237 + 568)
+    ├── bist_data.py                     # Hibrit veri çekme
+    ├── bist_momentum_katilim.py         # BIST katılım top 5
+    └── bist_momentum_genel.py           # BIST genel top 5
+
+## Veri Kaynakları
+
+### ABD
+- **Fiyat:** [yfinance](https://github.com/ranaroussi/yfinance) — Yahoo Finance
+- **Evren:** Wikipedia (S&P 500 + Nasdaq 100)
+- **Fundamental:** yfinance (ROE, marj, sektör)
+
+### BIST
+- **Birincil:** [borsapy](https://github.com/saidsurucu/borsapy) — yfinance benzeri modern API
+- **Yedek:** [isyatirimhisse](https://github.com/urazakgul/isyatirimhisse) — İş Yatırım resmi kaynaklı
+- **Evren:** KAP resmi endeks listeleri (XKTUM + XUTUM)
+
+## Teknoloji Yığını
+
+Python 3.11, pandas, numpy, yfinance, borsapy, isyatirimhisse, lxml, beautifulsoup4, requests, GitHub Actions, Telegram Bot API.
 
 ## Sistem Hakkında Notlar
 
 ### Güçlü Yönler
-- **Tutarlı outperformance:** 6 yılın 6'sında da S&P 500'ü yendi
-- **2022 ayı piyasasında pozitif getiri** — momentum stratejileri için olağandışı
-- **Düşük max drawdown** — Çoklu lookback rejim değişikliklerini hızlı yakalar
-- **Yüksek Sharpe oranı** (1,67) — Risk-ayarlı getiri üstün
+- **5 stratejinin paralel çalışması** — her birinin kendine özgü karakteri
+- **2022 ayı piyasasında pozitif getiri** (momentum stratejileri için olağandışı)
+- **Sektör ve quality filtreleri** ile risk yönetimi seçenekleri
+- **Hibrit veri kaynakları** — failover mantığı ile dayanıklılık
+- **Tam otomatik** — her ay 1'i otomatik çalışır
 
-### Riskler
-- **Survivorship bias:** Backtest şu anki S&P 500 üyelerini kullanır. Gerçek getiri %5-15 daha düşük olabilir
+### Riskler ve Sınırlamalar
+- **Survivorship bias:** Backtest mevcut endeks üyelerini kullanır
 - **İşlem maliyetleri** hesaplanmamış (~%1-3/yıl)
 - **Vergi:** Aylık rebalans → yüksek kısa vadeli sermaye kazancı vergisi
-- **Konsantrasyon riski:** Top 10 ağırlıklı olarak teknoloji/yarı iletken sektöründe
-- **Momentum crash riski:** Trend dönüşlerinde sert düşüşler yaşanabilir
-
-## Veri Kaynakları
-
-- **Fiyat verisi:** [yfinance](https://github.com/ranaroussi/yfinance)
-- **Hisse listesi:** Wikipedia (S&P 500, Nasdaq 100)
-
-## Teknoloji Yığını
-
-Python 3.11, pandas, numpy, yfinance, lxml, beautifulsoup4, requests, GitHub Actions, Telegram Bot API
+- **Konsantrasyon riski:** Saf momentum'da yüksek (Diverse ile azalır)
+- **Momentum crash riski:** Trend dönüşlerinde sert düşüşler
+- **Quality verisi look-ahead bias:** Backtest yaklaşık sonuç verir
 
 ## Yol Haritası
 
@@ -159,18 +205,23 @@ Python 3.11, pandas, numpy, yfinance, lxml, beautifulsoup4, requests, GitHub Act
 - [x] Backtest motoru (7 yıllık tarihsel test)
 - [x] Telegram bildirimi
 - [x] GitHub Actions ile otomatik aylık çalıştırma
-- [ ] Hata yakalama ve retry mantığı
-- [ ] Geçmiş seçimler logu
-- [ ] Quality faktörü (ROE, kâr büyümesi, brüt marj)
-- [ ] Sektör çeşitlendirme kuralı
+- [x] Hata yakalama ve retry mantığı
+- [x] Sektör çeşitlendirme stratejisi
+- [x] Quality momentum stratejisi
+- [x] 3 ABD stratejisinin karşılaştırmalı backtest'i
+- [x] BIST Katılım modeli (top 5)
+- [x] BIST Genel modeli (top 5)
+- [x] Hibrit BIST veri kaynağı (borsapy + isyatirimhisse)
+- [ ] BIST için karşılaştırmalı backtest
+- [ ] Geçmiş seçimler logu (commit history)
+- [ ] QuantConnect entegrasyonu (point-in-time veri)
 - [ ] Düşük volatilite filtresi
-- [ ] QuantConnect entegrasyonu
-- [ ] BIST evrenine uyarlama (katılım vs genel)
+- [ ] Karma portföy stratejisi (Momentum + Diverse + Quality)
 - [ ] Dashboard (web arayüzü)
 
 ## Uyarı
 
-Bu proje **eğitim ve araştırma amaçlıdır**. Yatırım tavsiyesi değildir. Geçmiş performans gelecek getiri garantisi vermez.
+Bu proje **eğitim ve araştırma amaçlıdır**. Yatırım tavsiyesi değildir. Geçmiş performans gelecek getiri garantisi vermez. Kullanmadan önce kendi araştırmanı yap ve riski anla.
 
 ## Lisans
 
@@ -180,4 +231,6 @@ MIT License
 
 <div align="center">
   <sub>Built with care, guided by a star.</sub>
+  <br/>
+  <sub>⭐ <a href="https://github.com/Mimar2026/sirius">github.com/Mimar2026/sirius</a></sub>
 </div>
