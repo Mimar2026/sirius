@@ -1,0 +1,87 @@
+{
+  "sistem_kodu": "diverse",
+  "portfoy_baslangic": 10000,
+  "para_birimi": "$",
+  "olusturma_tarihi": "2026-05-26",
+  "kayitlar": [
+    {
+      "tarih": "2026-05-31",
+      "ay_adi": "Haziran 2026",
+      "portfoy_buyuklugu": 10000,
+      "pozisyon_yuzde": 10,
+      "hisseler": [
+        {
+          "sembol": "MU",
+          "giris_fiyat": 877.0,
+          "lot": 1.1403,
+          "tutar": 1000.0,
+          "skor": 99.61
+        },
+        {
+          "sembol": "INTC",
+          "giris_fiyat": 122.555,
+          "lot": 8.1596,
+          "tutar": 1000.0,
+          "skor": 99.42
+        },
+        {
+          "sembol": "WDC",
+          "giris_fiyat": 531.8,
+          "lot": 1.8804,
+          "tutar": 1000.0,
+          "skor": 99.29
+        },
+        {
+          "sembol": "FIX",
+          "giris_fiyat": 1886.6949,
+          "lot": 0.53,
+          "tutar": 1000.0,
+          "skor": 96.11
+        },
+        {
+          "sembol": "VRT",
+          "giris_fiyat": 330.615,
+          "lot": 3.0247,
+          "tutar": 1000.0,
+          "skor": 95.01
+        },
+        {
+          "sembol": "GEV",
+          "giris_fiyat": 1078.98,
+          "lot": 0.9268,
+          "tutar": 1000.0,
+          "skor": 93.32
+        },
+        {
+          "sembol": "NUE",
+          "giris_fiyat": 239.11,
+          "lot": 4.1822,
+          "tutar": 1000.0,
+          "skor": 93.06
+        },
+        {
+          "sembol": "APA",
+          "giris_fiyat": 38.46,
+          "lot": 26.001,
+          "tutar": 1000.0,
+          "skor": 92.67
+        },
+        {
+          "sembol": "STLD",
+          "giris_fiyat": 248.375,
+          "lot": 4.0262,
+          "tutar": 1000.0,
+          "skor": 91.25
+        },
+        {
+          "sembol": "HAL",
+          "giris_fiyat": 41.315,
+          "lot": 24.2043,
+          "tutar": 1000.0,
+          "skor": 89.69
+        }
+      ],
+      "kayit_zamani": "2026-05-26 15:34:49"
+    }
+  ]
+}
