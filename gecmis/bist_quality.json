@@ -1,0 +1,52 @@
+{
+  "sistem_kodu": "bist_quality",
+  "portfoy_baslangic": 100000,
+  "para_birimi": "₺",
+  "olusturma_tarihi": "2026-06-02",
+  "kayitlar": [
+    {
+      "tarih": "2026-06-30",
+      "ay_adi": "Temmuz 2026",
+      "portfoy_buyuklugu": 100000,
+      "pozisyon_yuzde": 20,
+      "hisseler": [
+        {
+          "sembol": "ARASE",
+          "giris_fiyat": 124.5,
+          "lot": 160.6426,
+          "tutar": 20000.0,
+          "skor": 86.1
+        },
+        {
+          "sembol": "KTLEV",
+          "giris_fiyat": 129.8,
+          "lot": 154.0832,
+          "tutar": 20000.0,
+          "skor": 98.21
+        },
+        {
+          "sembol": "ISDMR",
+          "giris_fiyat": 63.45,
+          "lot": 315.2088,
+          "tutar": 20000.0,
+          "skor": 86.1
+        },
+        {
+          "sembol": "GMTAS",
+          "giris_fiyat": 44.6,
+          "lot": 448.4305,
+          "tutar": 20000.0,
+          "skor": 95.22
+        },
+        {
+          "sembol": "MAGEN",
+          "giris_fiyat": 64.8,
+          "lot": 308.642,
+          "tutar": 20000.0,
+          "skor": 83.11
+        }
+      ],
+      "kayit_zamani": "2026-06-02 20:15:48"
+    }
+  ]
+}
