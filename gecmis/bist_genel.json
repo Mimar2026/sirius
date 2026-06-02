@@ -430,7 +430,103 @@
           "skor": 98.9
         }
       ],
-      "kayit_zamani": "2026-06-01 11:33:55"
+      "kayit_zamani": "2026-06-01 11:33:55",
+      "onceki_ay_performans": {
+        "portfoy_yeni_deger": 106960.58,
+        "portfoy_giris_deger": 105030.12,
+        "aylik_getiri_pct": 1.84,
+        "hisse_detaylari": [
+          {
+            "sembol": "OZATD",
+            "giris_fiyat": 1368.0,
+            "son_fiyat": 1400.0,
+            "getiri_pct": 2.34,
+            "giris_tutar": 21006.05,
+            "yeni_deger": 21497.42,
+            "durum": "OK"
+          },
+          {
+            "sembol": "KTLEV",
+            "giris_fiyat": 126.2,
+            "son_fiyat": 129.8,
+            "getiri_pct": 2.85,
+            "giris_tutar": 21006.0,
+            "yeni_deger": 21605.22,
+            "durum": "OK"
+          },
+          {
+            "sembol": "GUNDG",
+            "giris_fiyat": 1067.0,
+            "son_fiyat": 1090.0,
+            "getiri_pct": 2.16,
+            "giris_tutar": 21006.03,
+            "yeni_deger": 21458.83,
+            "durum": "OK"
+          },
+          {
+            "sembol": "ANELE",
+            "giris_fiyat": 95.1,
+            "son_fiyat": 96.1,
+            "getiri_pct": 1.05,
+            "giris_tutar": 21006.0,
+            "yeni_deger": 21226.89,
+            "durum": "OK"
+          },
+          {
+            "sembol": "ODINE",
+            "giris_fiyat": 1264.0,
+            "son_fiyat": 1274.0,
+            "getiri_pct": 0.79,
+            "giris_tutar": 21006.04,
+            "yeni_deger": 21172.22,
+            "durum": "OK"
+          }
+        ]
+      }
+    },
+    {
+      "tarih": "2026-06-30",
+      "ay_adi": "Temmuz 2026",
+      "portfoy_buyuklugu": 106962.55,
+      "pozisyon_yuzde": 20,
+      "hisseler": [
+        {
+          "sembol": "OZATD",
+          "giris_fiyat": 1400.0,
+          "lot": 15.2804,
+          "tutar": 21392.51,
+          "skor": 99.51
+        },
+        {
+          "sembol": "ANELE",
+          "giris_fiyat": 96.1,
+          "lot": 222.6068,
+          "tutar": 21392.51,
+          "skor": 99.02
+        },
+        {
+          "sembol": "KTLEV",
+          "giris_fiyat": 129.8,
+          "lot": 164.8113,
+          "tutar": 21392.51,
+          "skor": 98.41
+        },
+        {
+          "sembol": "BIGEN",
+          "giris_fiyat": 44.76,
+          "lot": 477.9381,
+          "tutar": 21392.51,
+          "skor": 98.29
+        },
+        {
+          "sembol": "PRZMA",
+          "giris_fiyat": 49.4,
+          "lot": 433.0468,
+          "tutar": 21392.51,
+          "skor": 98.17
+        }
+      ],
+      "kayit_zamani": "2026-06-02 20:12:11"
     }
   ]
 }
