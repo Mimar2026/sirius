@@ -12,42 +12,46 @@
   </a>
   <img src="https://img.shields.io/badge/python-3.11-blue.svg" alt="Python 3.11"/>
   <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License"/>
-  <img src="https://img.shields.io/badge/systems-5_parallel-success.svg" alt="5 Parallel Systems"/>
+  <img src="https://img.shields.io/badge/systems-6_parallel-success.svg" alt="6 Parallel Systems"/>
   <img src="https://img.shields.io/badge/markets-US_+_BIST-orange.svg" alt="US + BIST"/>
+  <img src="https://img.shields.io/badge/performance-tracked-blueviolet.svg" alt="Performance Tracked"/>
 </p>
 
 ---
 
 # Sirius — Multi-Strategy Momentum Portföy Motoru
 
-ABD ve Türk hisse senedi piyasaları için aylık çalışan momentum tabanlı portföy seçim sistemi. **5 paralel strateji** her ay otomatik olarak top portföyleri seçer ve Telegram üzerinden bildirim gönderir.
+ABD ve Türk hisse senedi piyasaları için aylık çalışan, momentum tabanlı **6 paralel strateji** yöneten otonom portföy seçim sistemi. Her ay başında otomatik çalışır, her stratejinin top hisselerini seçer, performansları takip eder ve Telegram üzerinden detaylı bildirim gönderir.
 
 İsim Antik Mısır'da Nil'in taşmasını müjdeleyen Sirius yıldızından gelir. Gözlenebilir bir sinyal, sonraki bereketin habercisidir. Sistem de aynı mantıkla çalışır: her ay başında bir sinyal verir, ardından yükseliş gelir.
 
-## Sistem Mimarisi
-SIRIUS - 5 Paralel Momentum Sistemi
-═══════════════════════════════════
-ABD Piyasası (S&P 500 + Nasdaq 100, ~516 hisse)
+## Sistem MimarisiSIRIUS — 6 PARALEL MOMENTUM SİSTEMİ
+═══════════════════════════════════════ABD Piyasası (S&P 500 + Nasdaq 100, ~516 hisse)
 ├── 🌟 Saf Momentum         → Top 10 (en güçlü 10)
 ├── 🌐 Sektör Diverse       → Top 10 (max 3 hisse/sektör)
-└── 💎 Quality Momentum     → Top 10 (momentum + ROE + marj)
-BIST (Borsa İstanbul)
+└── 💎 Quality Momentum     → Top 10 (momentum + ROE + marj)BIST (Borsa İstanbul)
 ├── 🇹🇷 BIST Katılım        → Top 5 (237 katılım hissesi)
-└── 🇹🇷 BIST Genel          → Top 5 (568 BIST hisse)
-OTOMATİZASYON
+├── 🇹🇷 BIST Genel          → Top 5 (568 BIST hissesi)
+└── 💎 BIST Quality         → Top 5 (momentum + quality)PORTFOY YÖNETİMİ
+├── ABD: 3 × $10,000 (her sistem bağımsız)
+├── BIST: 3 × ₺100,000 (her sistem bağımsız)
+├── Eşit ağırlık (her hisse %10 ABD, %20 BIST)
+└── Bileşik büyüme (kazanç sonraki aya aktarılır)OTOMATİZASYON
 ├── Her ayın 1'i 09:00 TSİ otomatik çalışır
-├── 5 paralel job, GitHub Actions
-├── 5 ayrı Telegram bildirimi
+├── 6 sıralı job, GitHub Actions
+├── 6 ayrı Telegram bildirimi
 ├── Hata yakalama + retry mantığı
+├── JSON tabanlı performans takip
 └── Maliyet: $0
 
 ## Özellikler
 
 - **Tam otonom** — Her ayın 1'i 09:00 TSİ GitHub Actions üzerinde otomatik çalışır
-- **Çoklu strateji** — 5 farklı stratejinin paralel sonuçlarını alabilirsin
+- **6 farklı strateji** — Risk profillerine göre seçim yapma imkanı
 - **İki pazar** — ABD ve BIST için ayrı sistemler
-- **Telegram entegrasyonu** — Anlık bildirim, otomatik mesaj
-- **Hibrit veri kaynağı** — BIST için borsapy + isyatirimhisse (failover)
+- **Performans takip** — Aylık getiri, kümülatif kazanç, Sharpe, drawdown
+- **Telegram bildirimi** — Detaylı aksiyon mesajları (giriş, hedef, stop, lot)
+- **Hibrit veri kaynağı** — BIST için borsapy + isyatirimhisse failover
 - **Hata yönetimi** — Retry mantığı + Telegram'a hata bildirimi
 - **Sıfır maliyet** — Tüm bileşenler ücretsiz
 
@@ -75,8 +79,9 @@ Backtest dönemi: 2020-06 → 2026-05 (72 ay)
 
 | Strateji | Evren | Top N | Açıklama |
 |---|---|---|---|
-| **BIST Katılım** | 237 katılım hissesi | 5 | İslami finans uyumlu |
-| **BIST Genel** | 568 BIST hissesi | 5 | Tüm pazar evreni |
+| **BIST Katılım** | 237 katılım hissesi | 5 | İslami finans uyumlu, saf momentum |
+| **BIST Genel** | 568 BIST hissesi | 5 | Tüm pazar evreni, saf momentum |
+| **BIST Quality** | 237 katılım hissesi | 5 | Momentum + Quality (likidite, volatilite, trend tutarlılığı) |
 
 ## Sistem Nasıl Çalışır
 
@@ -92,79 +97,124 @@ Her getiri yüzdelik dilime çevrilir, üçünün ortalaması alınır. Bu skor 
 
 ### Strateji Özelleştirmeleri
 
-**Saf Momentum:** Hiç filtre yok, ham sıralama
-**Sektör Diverse:** Her sektörden max 3 hisse
-**Quality:** Final skor = %60 momentum + %40 quality (ROE + brüt marj)
-**BIST Katılım/Genel:** Saf momentum, top 5 seçim
+| Strateji | Filtre |
+|---|---|
+| Saf Momentum | Yok, ham sıralama |
+| Sektör Diverse | Her sektörden max 3 hisse |
+| Quality (ABD) | %60 momentum + %40 quality (ROE + marj + büyüme) |
+| BIST Quality | %60 momentum + %40 quality (volatilite + trend tutarlılığı + drawdown + aşırılık cezası) |
+| BIST Katılım/Genel | Saf momentum, top 5 |
+
+## Performans Takip Sistemi
+
+Her sistem kendi JSON dosyasında geçmiş portföy seçimlerini saklar:gecmis/
+├── momentum.json
+├── diverse.json
+├── quality.json
+├── bist_katilim.json
+├── bist_genel.json
+└── bist_quality.json
+
+Her ay:
+1. Önceki ayın portföyü güncel fiyatlarla değerlenir
+2. Aylık getiri hesaplanır
+3. Kümülatif performans güncellenir (toplam getiri, yıllık bileşik, drawdown, Sharpe)
+4. Yeni portföy seçimi yapılır ve JSON'a eklenir
+5. Telegram'da hem performans hem yeni seçim gösterilir
+
+### Hesaplanan Metrikler
+
+- Toplam kâr/zarar (mutlak ve yüzde)
+- Yıllık bileşik getiri (annualized)
+- Maksimum drawdown
+- Sharpe oranı (3+ ay sonra anlamlı)
+- Aylık dağılım
+- En iyi/en kötü performans gösteren hisseler
 
 ## Otomatik Çalıştırma
 
-Sistem her ayın 1'i 09:00 Türkiye saatinde GitHub Actions üzerinde **5 paralel job** olarak çalışır:
+Sistem her ayın 1'i 09:00 Türkiye saatinde GitHub Actions üzerinde 6 sıralı job olarak çalışır:
 
-1. GitHub sanal makineleri başlatılır (5 adet, paralel)
-2. Bağımlılıklar yüklenir (yfinance, pandas, isyatirimhisse, borsapy vs.)
-3. Her sistem kendi evrenini ve veri kaynağını kullanır
-4. Top N hisseler seçilir
-5. Telegram bot üzerinden 5 ayrı bildirim gönderilir
+1. GitHub sanal makinesi başlatılır
+2. Bağımlılıklar yüklenir
+3. Önceki portföy değerlenir
+4. Yeni portföy seçilir
+5. JSON güncellenir, repo'ya commit edilir
+6. Telegram bildirimi gönderilir
+7. Bir sonraki sisteme geçilir
 
-Tüm süreç ~15-30 dakika sürer ve kullanıcı müdahalesi gerektirmez.
+Tüm süreç ~45-60 dakika sürer ve kullanıcı müdahalesi gerektirmez.
 
-Workflow durumunu görmek için: [Actions sekmesi](https://github.com/Mimar2026/sirius/actions)
+Workflow durumu: [Actions sekmesi](https://github.com/Mimar2026/sirius/actions)
+
+## Telegram Mesaj İçeriği
+
+Her hisse için:
+- Giriş fiyatı (son kapanış)
+- Hedef fiyat (+%25 / +%30)
+- Stop-loss (-%15)
+- 30 günlük ortalama
+- Momentum skoru ve getiriler
+- Volatilite seviyesi
+- Risk skoru (0-5)
+- Net alım tutarı ve lot/hisse sayısı
+
+Mesaj sonunda:
+- Portföy özeti (ortalama skor, risk, getiri)
+- Sektör dağılımı
+- Performans geçmişi (varsa)
+- Geçerlilik tarihleri
 
 ## Manuel Çalıştırma
 
-Bağımlılıkları yükle ve istediğin scripti çalıştır:
+```bashpip install -r requirements.txtABD sistemleri
+python momentum_system.py              # Saf momentum
+python momentum_sector_diverse.py      # Sektör diverse
+python momentum_quality.py             # Quality momentumBIST sistemleri
+python bist_momentum_katilim.py        # BIST katılım
+python bist_momentum_genel.py          # BIST genel
+python bist_momentum_quality.py        # BIST qualityBacktest karşılaştırma
+python backtest_compare.py             # 3 ABD stratejisi 7 yıllık karşılaştırma
 
-    pip install -r requirements.txt
-    
-    # ABD sistemleri
-    python momentum_system.py              # Saf momentum
-    python momentum_sector_diverse.py      # Sektör diverse
-    python momentum_quality.py             # Quality momentum
-    
-    # BIST sistemleri
-    python bist_momentum_katilim.py        # BIST katılım
-    python bist_momentum_genel.py          # BIST genel
-    
-    # Backtest karşılaştırma
-    python backtest_compare.py             # 3 ABD stratejisi 7 yıllık karşılaştırma
+## Telegram Bot Kurulumu
 
-## Telegram Bildirimi
+```bashexport TELEGRAM_BOT_TOKEN="bot_tokeniniz"
+export TELEGRAM_CHAT_ID="chat_id_niz"
 
-Sistem her çalıştığında Telegram'a otomatik mesaj gönderir:
+Bot oluşturmak için [BotFather](https://t.me/BotFather). GitHub Actions kullanıyorsan token'ları Repository Secrets içinde saklamalısın.
 
-    export TELEGRAM_BOT_TOKEN="bot_tokeniniz"
-    export TELEGRAM_CHAT_ID="chat_id_niz"
-
-Bot kurulumu için [BotFather](https://t.me/BotFather).
-
-GitHub Actions kullanıyorsan token'ları **Repository Secrets** içinde saklamalısın.
-
-## Dosya Yapısı
-
-    sirius/
-    ├── .github/workflows/
-    │   └── monthly_run.yml              # Otomatik aylık çalıştırma
-    ├── assets/
-    │   ├── sirius_avatar.png
-    │   ├── sirius_avatar_hd.png
-    │   ├── sirius_banner.png
-    │   └── ...
-    ├── README.md
-    ├── requirements.txt
-    │
-    │── ABD Sistemleri ──
-    ├── momentum_system.py               # Saf momentum
-    ├── momentum_sector_diverse.py       # Sektör çeşitlendirmeli
-    ├── momentum_quality.py              # Quality + momentum
-    ├── backtest.py                      # Tek strateji backtest
-    ├── backtest_compare.py              # 3 strateji karşılaştırma
-    │
-    │── BIST Sistemleri ──
-    ├── bist_hisseler.py                 # Hisse listeleri (237 + 568)
-    ├── bist_data.py                     # Hibrit veri çekme
-    ├── bist_momentum_katilim.py         # BIST katılım top 5
-    └── bist_momentum_genel.py           # BIST genel top 5
+## Dosya Yapısısirius/
+├── .github/workflows/
+│   └── monthly_run.yml              # Otomatik aylık çalıştırma
+├── assets/
+│   ├── sirius_avatar.png
+│   ├── sirius_avatar_hd.png
+│   ├── sirius_banner.png
+│   └── ...
+├── gecmis/                          # Performans geçmişi (auto-generated)
+│   ├── momentum.json
+│   ├── diverse.json
+│   ├── quality.json
+│   ├── bist_katilim.json
+│   ├── bist_genel.json
+│   └── bist_quality.json
+├── README.md
+├── requirements.txt
+│
+├── sirius_helpers.py                # Ortak yardımcı fonksiyonlar
+├── performans_tracker.py            # Performans hesaplama modülü
+│
+├── momentum_system.py               # ABD - Saf momentum
+├── momentum_sector_diverse.py       # ABD - Sektör çeşitlendirme
+├── momentum_quality.py              # ABD - Quality momentum
+├── backtest.py                      # Tek strateji backtest
+├── backtest_compare.py              # 3 ABD stratejisi karşılaştırma
+│
+├── bist_hisseler.py                 # BIST hisse listeleri (237 + 568)
+├── bist_data.py                     # Hibrit BIST veri çekme
+├── bist_momentum_katilim.py         # BIST katılım top 5
+├── bist_momentum_genel.py           # BIST genel top 5
+└── bist_momentum_quality.py         # BIST quality top 5
 
 ## Veri Kaynakları
 
@@ -174,28 +224,29 @@ GitHub Actions kullanıyorsan token'ları **Repository Secrets** içinde saklama
 - **Fundamental:** yfinance (ROE, marj, sektör)
 
 ### BIST
-- **Birincil:** [borsapy](https://github.com/saidsurucu/borsapy) — yfinance benzeri modern API
-- **Yedek:** [isyatirimhisse](https://github.com/urazakgul/isyatirimhisse) — İş Yatırım resmi kaynaklı
+- **Birincil:** [borsapy](https://github.com/saidsurucu/borsapy) — modern API
+- **Yedek:** [isyatirimhisse](https://github.com/urazakgul/isyatirimhisse) — İş Yatırım kaynaklı
 - **Evren:** KAP resmi endeks listeleri (XKTUM + XUTUM)
 
 ## Teknoloji Yığını
 
-Python 3.11, pandas, numpy, yfinance, borsapy, isyatirimhisse, lxml, beautifulsoup4, requests, GitHub Actions, Telegram Bot API.
+Python 3.11, pandas, numpy, yfinance, borsapy, isyatirimhisse, lxml, beautifulsoup4, requests, GitHub Actions, Telegram Bot API, JSON tabanlı veri saklama.
 
 ## Sistem Hakkında Notlar
 
 ### Güçlü Yönler
-- **5 stratejinin paralel çalışması** — her birinin kendine özgü karakteri
-- **2022 ayı piyasasında pozitif getiri** (momentum stratejileri için olağandışı)
-- **Sektör ve quality filtreleri** ile risk yönetimi seçenekleri
-- **Hibrit veri kaynakları** — failover mantığı ile dayanıklılık
-- **Tam otomatik** — her ay 1'i otomatik çalışır
+- **6 stratejinin paralel çalışması** — farklı risk profillerine seçenek
+- **Performans takibi otomatik** — gerçek getirileri ölç
+- **2022 ayı piyasasında pozitif getiri** (ABD momentum için olağandışı)
+- **Sektör ve quality filtreleri** ile risk yönetimi
+- **Hibrit veri kaynakları** ile dayanıklılık
+- **Tam otomatik** — kullanıcı müdahalesi gerekmez
 
 ### Riskler ve Sınırlamalar
 - **Survivorship bias:** Backtest mevcut endeks üyelerini kullanır
 - **İşlem maliyetleri** hesaplanmamış (~%1-3/yıl)
 - **Vergi:** Aylık rebalans → yüksek kısa vadeli sermaye kazancı vergisi
-- **Konsantrasyon riski:** Saf momentum'da yüksek (Diverse ile azalır)
+- **Konsantrasyon riski:** Saf momentum'da yüksek
 - **Momentum crash riski:** Trend dönüşlerinde sert düşüşler
 - **Quality verisi look-ahead bias:** Backtest yaklaşık sonuç verir
 
@@ -207,21 +258,26 @@ Python 3.11, pandas, numpy, yfinance, borsapy, isyatirimhisse, lxml, beautifulso
 - [x] GitHub Actions ile otomatik aylık çalıştırma
 - [x] Hata yakalama ve retry mantığı
 - [x] Sektör çeşitlendirme stratejisi
-- [x] Quality momentum stratejisi
+- [x] Quality momentum stratejisi (ABD)
 - [x] 3 ABD stratejisinin karşılaştırmalı backtest'i
 - [x] BIST Katılım modeli (top 5)
 - [x] BIST Genel modeli (top 5)
+- [x] BIST Quality modeli (top 5)
 - [x] Hibrit BIST veri kaynağı (borsapy + isyatirimhisse)
+- [x] Detaylı Telegram mesajları (giriş + hedef + stop + lot)
+- [x] JSON tabanlı performans takip sistemi
+- [x] Kümülatif getiri ve yıllık bileşik hesabı
+- [x] GitHub Actions otomatik commit (JSON kayıt)
 - [ ] BIST için karşılaştırmalı backtest
-- [ ] Geçmiş seçimler logu (commit history)
+- [ ] Karma portföy stratejisi (6 sistemin oylama birleşimi)
 - [ ] QuantConnect entegrasyonu (point-in-time veri)
 - [ ] Düşük volatilite filtresi
-- [ ] Karma portföy stratejisi (Momentum + Diverse + Quality)
-- [ ] Dashboard (web arayüzü)
+- [ ] Geçmiş seçimler dashboardu (web arayüzü)
+- [ ] Hisse fundamental verisi BIST için (kurum veya API)
 
 ## Uyarı
 
-Bu proje **eğitim ve araştırma amaçlıdır**. Yatırım tavsiyesi değildir. Geçmiş performans gelecek getiri garantisi vermez. Kullanmadan önce kendi araştırmanı yap ve riski anla.
+Bu proje eğitim ve araştırma amaçlıdır. Yatırım tavsiyesi değildir. Geçmiş performans gelecek getiri garantisi vermez. Yatırım kararlarınız ve sonuçları size aittir. Kullanmadan önce kendi araştırmanı yap ve riski anla.
 
 ## Lisans
 
