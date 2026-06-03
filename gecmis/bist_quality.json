@@ -46,7 +46,103 @@
           "skor": 83.11
         }
       ],
-      "kayit_zamani": "2026-06-02 20:15:48"
+      "kayit_zamani": "2026-06-02 20:15:48",
+      "onceki_ay_performans": {
+        "portfoy_yeni_deger": 103342.13,
+        "portfoy_giris_deger": 100000.0,
+        "aylik_getiri_pct": 3.34,
+        "hisse_detaylari": [
+          {
+            "sembol": "ARASE",
+            "giris_fiyat": 124.5,
+            "son_fiyat": 126.4,
+            "getiri_pct": 1.53,
+            "giris_tutar": 20000.0,
+            "yeni_deger": 20305.22,
+            "durum": "OK"
+          },
+          {
+            "sembol": "KTLEV",
+            "giris_fiyat": 129.8,
+            "son_fiyat": 129.8,
+            "getiri_pct": 0.0,
+            "giris_tutar": 20000.0,
+            "yeni_deger": 20000.0,
+            "durum": "OK"
+          },
+          {
+            "sembol": "ISDMR",
+            "giris_fiyat": 63.45,
+            "son_fiyat": 66.25,
+            "getiri_pct": 4.41,
+            "giris_tutar": 20000.0,
+            "yeni_deger": 20882.58,
+            "durum": "OK"
+          },
+          {
+            "sembol": "GMTAS",
+            "giris_fiyat": 44.6,
+            "son_fiyat": 49.06,
+            "getiri_pct": 10.0,
+            "giris_tutar": 20000.0,
+            "yeni_deger": 22000.0,
+            "durum": "OK"
+          },
+          {
+            "sembol": "MAGEN",
+            "giris_fiyat": 64.8,
+            "son_fiyat": 65.3,
+            "getiri_pct": 0.77,
+            "giris_tutar": 20000.0,
+            "yeni_deger": 20154.32,
+            "durum": "OK"
+          }
+        ]
+      }
+    },
+    {
+      "tarih": "2026-06-30",
+      "ay_adi": "Temmuz 2026",
+      "portfoy_buyuklugu": 103340.0,
+      "pozisyon_yuzde": 20,
+      "hisseler": [
+        {
+          "sembol": "GMTAS",
+          "giris_fiyat": 49.06,
+          "lot": 421.2801,
+          "tutar": 20668.0,
+          "skor": 96.26
+        },
+        {
+          "sembol": "ISDMR",
+          "giris_fiyat": 66.25,
+          "lot": 311.9698,
+          "tutar": 20668.0,
+          "skor": 85.95
+        },
+        {
+          "sembol": "MAGEN",
+          "giris_fiyat": 65.3,
+          "lot": 316.5084,
+          "tutar": 20668.0,
+          "skor": 82.96
+        },
+        {
+          "sembol": "ARASE",
+          "giris_fiyat": 126.4,
+          "lot": 163.5127,
+          "tutar": 20668.0,
+          "skor": 84.3
+        },
+        {
+          "sembol": "KTLEV",
+          "giris_fiyat": 129.8,
+          "lot": 159.2296,
+          "tutar": 20668.0,
+          "skor": 97.76
+        }
+      ],
+      "kayit_zamani": "2026-06-03 12:33:00"
     }
   ]
 }
