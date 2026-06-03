@@ -526,7 +526,103 @@
           "skor": 95.22
         }
       ],
-      "kayit_zamani": "2026-06-02 20:05:51"
+      "kayit_zamani": "2026-06-02 20:05:51",
+      "onceki_ay_performans": {
+        "portfoy_yeni_deger": 112694.04,
+        "portfoy_giris_deger": 109255.19,
+        "aylik_getiri_pct": 3.15,
+        "hisse_detaylari": [
+          {
+            "sembol": "OZATD",
+            "giris_fiyat": 1400.0,
+            "son_fiyat": 1429.0,
+            "getiri_pct": 2.07,
+            "giris_tutar": 21851.06,
+            "yeni_deger": 22303.69,
+            "durum": "OK"
+          },
+          {
+            "sembol": "KTLEV",
+            "giris_fiyat": 129.8,
+            "son_fiyat": 129.8,
+            "getiri_pct": 0.0,
+            "giris_tutar": 21851.04,
+            "yeni_deger": 21851.04,
+            "durum": "OK"
+          },
+          {
+            "sembol": "KRDMB",
+            "giris_fiyat": 114.5,
+            "son_fiyat": 108.4,
+            "getiri_pct": -5.33,
+            "giris_tutar": 21851.03,
+            "yeni_deger": 20686.92,
+            "durum": "OK"
+          },
+          {
+            "sembol": "YEOTK",
+            "giris_fiyat": 112.3,
+            "son_fiyat": 122.4,
+            "getiri_pct": 8.99,
+            "giris_tutar": 21851.03,
+            "yeni_deger": 23816.26,
+            "durum": "OK"
+          },
+          {
+            "sembol": "GMTAS",
+            "giris_fiyat": 44.6,
+            "son_fiyat": 49.06,
+            "getiri_pct": 10.0,
+            "giris_tutar": 21851.03,
+            "yeni_deger": 24036.14,
+            "durum": "OK"
+          }
+        ]
+      }
+    },
+    {
+      "tarih": "2026-06-30",
+      "ay_adi": "Temmuz 2026",
+      "portfoy_buyuklugu": 112696.7,
+      "pozisyon_yuzde": 20,
+      "hisseler": [
+        {
+          "sembol": "OZATD",
+          "giris_fiyat": 1429.0,
+          "lot": 15.7728,
+          "tutar": 22539.34,
+          "skor": 99.55
+        },
+        {
+          "sembol": "KTLEV",
+          "giris_fiyat": 129.8,
+          "lot": 173.6467,
+          "tutar": 22539.34,
+          "skor": 97.76
+        },
+        {
+          "sembol": "KRDMB",
+          "giris_fiyat": 108.4,
+          "lot": 207.9275,
+          "tutar": 22539.34,
+          "skor": 97.31
+        },
+        {
+          "sembol": "YEOTK",
+          "giris_fiyat": 122.4,
+          "lot": 184.1449,
+          "tutar": 22539.34,
+          "skor": 96.86
+        },
+        {
+          "sembol": "GMTAS",
+          "giris_fiyat": 49.06,
+          "lot": 459.424,
+          "tutar": 22539.34,
+          "skor": 96.26
+        }
+      ],
+      "kayit_zamani": "2026-06-03 12:24:22"
     }
   ]
 }
