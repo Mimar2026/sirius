@@ -3,7 +3,6 @@ name: Aylik Sirius Calistirmasi
 on:
   workflow_dispatch:
 
-# Workflow'a repo'ya yazma yetkisi ver
 permissions:
   contents: write
 
@@ -11,32 +10,33 @@ jobs:
   # ============================================
   # ABD SISTEMLERI
   # ============================================
-  
+
   abd-momentum:
     runs-on: ubuntu-latest
     name: ABD - Saf Momentum
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      
+
       - name: Run ABD Momentum
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python momentum_system.py
-      
+
       - name: Commit history changes
+        if: always()
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
@@ -44,34 +44,35 @@ jobs:
           git diff --staged --quiet || git commit -m "[auto] Momentum gecmis guncellendi"
           git pull --rebase --autostash || true
           git push || true
-  
-    abd-diverse:
+
+  abd-diverse:
     runs-on: ubuntu-latest
     name: ABD - Sektor Diverse
     needs: abd-momentum
     if: always()
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      
+
       - name: Run ABD Diverse
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python momentum_sector_diverse.py
-      
+
       - name: Commit history changes
+        if: always()
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
@@ -79,33 +80,35 @@ jobs:
           git diff --staged --quiet || git commit -m "[auto] Diverse gecmis guncellendi"
           git pull --rebase --autostash || true
           git push || true
-  
+
   abd-quality:
     runs-on: ubuntu-latest
     name: ABD - Quality Momentum
     needs: abd-diverse
-    
+    if: always()
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      
+
       - name: Run ABD Quality
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python momentum_quality.py
-      
+
       - name: Commit history changes
+        if: always()
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
@@ -113,38 +116,40 @@ jobs:
           git diff --staged --quiet || git commit -m "[auto] Quality gecmis guncellendi"
           git pull --rebase --autostash || true
           git push || true
-  
+
   # ============================================
   # BIST SISTEMLERI
   # ============================================
-  
+
   bist-katilim:
     runs-on: ubuntu-latest
     name: BIST - Katilim Top 5
     needs: abd-quality
+    if: always()
     timeout-minutes: 30
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      
+
       - name: Run BIST Katilim
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python bist_momentum_katilim.py
-      
+
       - name: Commit history changes
+        if: always()
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
@@ -152,34 +157,36 @@ jobs:
           git diff --staged --quiet || git commit -m "[auto] BIST Katilim gecmis guncellendi"
           git pull --rebase --autostash || true
           git push || true
-  
+
   bist-genel:
     runs-on: ubuntu-latest
     name: BIST - Genel Top 5
     needs: bist-katilim
+    if: always()
     timeout-minutes: 45
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      
+
       - name: Run BIST Genel
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python bist_momentum_genel.py
-      
+
       - name: Commit history changes
+        if: always()
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
@@ -187,34 +194,36 @@ jobs:
           git diff --staged --quiet || git commit -m "[auto] BIST Genel gecmis guncellendi"
           git pull --rebase --autostash || true
           git push || true
-          
+
   bist-quality:
     runs-on: ubuntu-latest
     name: BIST - Quality Top 5
     needs: bist-genel
+    if: always()
     timeout-minutes: 30
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      
+
       - name: Run BIST Quality
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python bist_momentum_quality.py
-      
+
       - name: Commit history changes
+        if: always()
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
