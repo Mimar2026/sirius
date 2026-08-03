@@ -45,10 +45,11 @@ jobs:
           git pull --rebase --autostash || true
           git push || true
   
-  abd-diverse:
+    abd-diverse:
     runs-on: ubuntu-latest
     name: ABD - Sektor Diverse
     needs: abd-momentum
+    if: always()
     
     steps:
       - name: Checkout repository
