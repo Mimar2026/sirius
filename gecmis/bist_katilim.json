@@ -718,7 +718,103 @@
           "skor": 96.26
         }
       ],
-      "kayit_zamani": "2026-07-01 05:07:11"
+      "kayit_zamani": "2026-07-01 05:07:11",
+      "onceki_ay_performans": {
+        "portfoy_yeni_deger": 157112.88,
+        "portfoy_giris_deger": 123977.76,
+        "aylik_getiri_pct": 26.73,
+        "hisse_detaylari": [
+          {
+            "sembol": "OZATD",
+            "giris_fiyat": 1604.0,
+            "son_fiyat": 3880.0,
+            "getiri_pct": 141.9,
+            "giris_tutar": 24795.59,
+            "yeni_deger": 59979.37,
+            "durum": "OK"
+          },
+          {
+            "sembol": "KTLEV",
+            "giris_fiyat": 174.5,
+            "son_fiyat": 155.6,
+            "getiri_pct": -10.83,
+            "giris_tutar": 24795.53,
+            "yeni_deger": 22109.94,
+            "durum": "OK"
+          },
+          {
+            "sembol": "GUNDG",
+            "giris_fiyat": 1660.0,
+            "son_fiyat": 1727.0,
+            "getiri_pct": 4.04,
+            "giris_tutar": 24795.59,
+            "yeni_deger": 25796.37,
+            "durum": "OK"
+          },
+          {
+            "sembol": "KRDMB",
+            "giris_fiyat": 138.6,
+            "son_fiyat": 134.5,
+            "getiri_pct": -2.96,
+            "giris_tutar": 24795.53,
+            "yeni_deger": 24062.04,
+            "durum": "OK"
+          },
+          {
+            "sembol": "EUPWR",
+            "giris_fiyat": 83.85,
+            "son_fiyat": 85.1,
+            "getiri_pct": 1.49,
+            "giris_tutar": 24795.53,
+            "yeni_deger": 25165.17,
+            "durum": "OK"
+          }
+        ]
+      }
+    },
+    {
+      "tarih": "2026-07-31",
+      "ay_adi": "Agustos 2026",
+      "portfoy_buyuklugu": 157116.86,
+      "pozisyon_yuzde": 20,
+      "hisseler": [
+        {
+          "sembol": "OZATD",
+          "giris_fiyat": 3880.0,
+          "lot": 8.0988,
+          "tutar": 31423.37,
+          "skor": 99.85
+        },
+        {
+          "sembol": "GUNDG",
+          "giris_fiyat": 1727.0,
+          "lot": 18.1954,
+          "tutar": 31423.37,
+          "skor": 99.1
+        },
+        {
+          "sembol": "YEOTK",
+          "giris_fiyat": 39.0,
+          "lot": 805.7275,
+          "tutar": 31423.37,
+          "skor": 97.61
+        },
+        {
+          "sembol": "KRDMB",
+          "giris_fiyat": 134.5,
+          "lot": 233.631,
+          "tutar": 31423.37,
+          "skor": 97.01
+        },
+        {
+          "sembol": "KTLEV",
+          "giris_fiyat": 155.6,
+          "lot": 201.9497,
+          "tutar": 31423.37,
+          "skor": 97.01
+        }
+      ],
+      "kayit_zamani": "2026-08-03 08:56:17"
     }
   ]
 }
