@@ -718,7 +718,103 @@
           "skor": 98.72
         }
       ],
-      "kayit_zamani": "2026-07-01 05:13:21"
+      "kayit_zamani": "2026-07-01 05:13:21",
+      "onceki_ay_performans": {
+        "portfoy_yeni_deger": 205314.86,
+        "portfoy_giris_deger": 149382.9,
+        "aylik_getiri_pct": 37.44,
+        "hisse_detaylari": [
+          {
+            "sembol": "OZATD",
+            "giris_fiyat": 1604.0,
+            "son_fiyat": 3880.0,
+            "getiri_pct": 141.9,
+            "giris_tutar": 29876.59,
+            "yeni_deger": 72270.04,
+            "durum": "OK"
+          },
+          {
+            "sembol": "BIGEN",
+            "giris_fiyat": 92.0,
+            "son_fiyat": 111.0,
+            "getiri_pct": 20.65,
+            "giris_tutar": 29876.6,
+            "yeni_deger": 36046.76,
+            "durum": "OK"
+          },
+          {
+            "sembol": "KTLEV",
+            "giris_fiyat": 174.5,
+            "son_fiyat": 155.6,
+            "getiri_pct": -10.83,
+            "giris_tutar": 29876.6,
+            "yeni_deger": 26640.68,
+            "durum": "OK"
+          },
+          {
+            "sembol": "ANELE",
+            "giris_fiyat": 115.0,
+            "son_fiyat": 121.0,
+            "getiri_pct": 5.22,
+            "giris_tutar": 29876.6,
+            "yeni_deger": 31435.38,
+            "durum": "OK"
+          },
+          {
+            "sembol": "ODINE",
+            "giris_fiyat": 1919.0,
+            "son_fiyat": 2500.0,
+            "getiri_pct": 30.28,
+            "giris_tutar": 29876.53,
+            "yeni_deger": 38922.0,
+            "durum": "OK"
+          }
+        ]
+      }
+    },
+    {
+      "tarih": "2026-07-31",
+      "ay_adi": "Agustos 2026",
+      "portfoy_buyuklugu": 205311.98,
+      "pozisyon_yuzde": 20,
+      "hisseler": [
+        {
+          "sembol": "OZATD",
+          "giris_fiyat": 3880.0,
+          "lot": 10.5831,
+          "tutar": 41062.4,
+          "skor": 99.82
+        },
+        {
+          "sembol": "HEDEF",
+          "giris_fiyat": 304.25,
+          "lot": 134.9627,
+          "tutar": 41062.4,
+          "skor": 99.76
+        },
+        {
+          "sembol": "BIGEN",
+          "giris_fiyat": 111.0,
+          "lot": 369.9315,
+          "tutar": 41062.4,
+          "skor": 99.45
+        },
+        {
+          "sembol": "ODINE",
+          "giris_fiyat": 2500.0,
+          "lot": 16.425,
+          "tutar": 41062.4,
+          "skor": 99.2
+        },
+        {
+          "sembol": "GUNDG",
+          "giris_fiyat": 1727.0,
+          "lot": 23.7767,
+          "tutar": 41062.4,
+          "skor": 99.02
+        }
+      ],
+      "kayit_zamani": "2026-08-03 09:04:13"
     }
   ]
 }
