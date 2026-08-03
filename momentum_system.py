@@ -95,25 +95,57 @@ def retry(fonksiyon, max_deneme=3, bekleme=5, adim_adi="islem"):
 
 
 def hisse_evrenini_cek():
+    """S&P 500 ve Nasdaq 100 birlestirilmis hisse evrenini doner."""
     headers = {"User-Agent": "Mozilla/5.0"}
     
+    # S&P 500
     sp_url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
     sp_response = requests.get(sp_url, headers=headers, timeout=15)
-    sp500 = pd.read_html(StringIO(sp_response.text))[0]["Symbol"].tolist()
+    sp_tablolari = pd.read_html(StringIO(sp_response.text))
     
+    sp_tablo = None
+    for t in sp_tablolari:
+        if "Symbol" in t.columns and len(t) >= 400:
+            sp_tablo = t
+            break
+    
+    if sp_tablo is None:
+        print("  UYARI: S&P 500 tablosu bulunamadi. Bulunan tablolar:")
+        for i, t in enumerate(sp_tablolari):
+            print(f"    Tablo {i}: {list(t.columns)[:5]}... ({len(t)} satir)")
+        raise Exception("S&P 500 tablosu bulunamadi - Wikipedia sayfa yapisi degismis olabilir")
+    
+    sp500 = sp_tablo["Symbol"].tolist()
+    
+    # Nasdaq 100
     nq_url = "https://en.wikipedia.org/wiki/Nasdaq-100"
     nq_response = requests.get(nq_url, headers=headers, timeout=15)
     nq_tablolari = pd.read_html(StringIO(nq_response.text))
-    nq_tablo = next(
-        (t for t in nq_tablolari 
-         if ("Ticker" in t.columns or "Symbol" in t.columns) and len(t) >= 90),
-        None
-    )
-    sembol_kol = "Ticker" if "Ticker" in nq_tablo.columns else "Symbol"
+    
+    nq_tablo = None
+    sembol_kol = None
+    # Genis kriter: Ticker, Symbol veya benzer sutun adlari, min 80 satir
+    olasi_kolonlar = ["Ticker", "Symbol", "Ticker symbol", "Ticker Symbol"]
+    for t in nq_tablolari:
+        for kol in olasi_kolonlar:
+            if kol in t.columns and len(t) >= 80:
+                nq_tablo = t
+                sembol_kol = kol
+                break
+        if nq_tablo is not None:
+            break
+    
+    if nq_tablo is None:
+        print("  UYARI: Nasdaq-100 tablosu bulunamadi. Bulunan tablolar:")
+        for i, t in enumerate(nq_tablolari):
+            print(f"    Tablo {i}: {list(t.columns)[:5]}... ({len(t)} satir)")
+        raise Exception("Nasdaq-100 tablosu bulunamadi - Wikipedia sayfa yapisi degismis olabilir")
+    
     nasdaq100 = nq_tablo[sembol_kol].tolist()
     
     birlesik = sorted(list(set(sp500) | set(nasdaq100)))
-    return [s.replace(".", "-") for s in birlesik]
+    return [str(s).replace(".", "-") for s in birlesik]
+
 
 
 def fiyat_verisi_cek(semboller, donem="2y"):
