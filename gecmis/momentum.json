@@ -1313,7 +1313,183 @@
           "skor": 97.66
         }
       ],
-      "kayit_zamani": "2026-07-01 05:01:36"
+      "kayit_zamani": "2026-07-01 05:01:36",
+      "onceki_ay_performans": {
+        "portfoy_yeni_deger": 9309.55,
+        "portfoy_giris_deger": 11654.04,
+        "aylik_getiri_pct": -20.12,
+        "hisse_detaylari": [
+          {
+            "sembol": "MU",
+            "giris_fiyat": 1154.29,
+            "son_fiyat": 882.2625122070312,
+            "getiri_pct": -23.57,
+            "giris_tutar": 1165.37,
+            "yeni_deger": 890.73,
+            "durum": "OK"
+          },
+          {
+            "sembol": "INTC",
+            "giris_fiyat": 139.63,
+            "son_fiyat": 98.7300033569336,
+            "getiri_pct": -29.29,
+            "giris_tutar": 1165.39,
+            "yeni_deger": 824.03,
+            "durum": "OK"
+          },
+          {
+            "sembol": "WDC",
+            "giris_fiyat": 638.72,
+            "son_fiyat": 544.3900146484375,
+            "getiri_pct": -14.77,
+            "giris_tutar": 1165.41,
+            "yeni_deger": 993.29,
+            "durum": "OK"
+          },
+          {
+            "sembol": "STX",
+            "giris_fiyat": 965.0,
+            "son_fiyat": 841.5,
+            "getiri_pct": -12.8,
+            "giris_tutar": 1165.43,
+            "yeni_deger": 1016.28,
+            "durum": "OK"
+          },
+          {
+            "sembol": "ALAB",
+            "giris_fiyat": 483.02,
+            "son_fiyat": 344.7850036621094,
+            "getiri_pct": -28.62,
+            "giris_tutar": 1165.38,
+            "yeni_deger": 831.86,
+            "durum": "OK"
+          },
+          {
+            "sembol": "NBIS",
+            "giris_fiyat": 276.17,
+            "son_fiyat": 222.5800018310547,
+            "getiri_pct": -19.4,
+            "giris_tutar": 1165.41,
+            "yeni_deger": 939.27,
+            "durum": "OK"
+          },
+          {
+            "sembol": "MRVL",
+            "giris_fiyat": 297.89,
+            "son_fiyat": 214.8491973876953,
+            "getiri_pct": -27.88,
+            "giris_tutar": 1165.41,
+            "yeni_deger": 840.53,
+            "durum": "OK"
+          },
+          {
+            "sembol": "AMD",
+            "giris_fiyat": 580.91,
+            "son_fiyat": 516.14501953125,
+            "getiri_pct": -11.15,
+            "giris_tutar": 1165.42,
+            "yeni_deger": 1035.49,
+            "durum": "OK"
+          },
+          {
+            "sembol": "DELL",
+            "giris_fiyat": 431.46,
+            "son_fiyat": 457.0950012207031,
+            "getiri_pct": 5.94,
+            "giris_tutar": 1165.42,
+            "yeni_deger": 1234.66,
+            "durum": "OK"
+          },
+          {
+            "sembol": "GLW",
+            "giris_fiyat": 255.43,
+            "son_fiyat": 154.1699981689453,
+            "getiri_pct": -39.64,
+            "giris_tutar": 1165.4,
+            "yeni_deger": 703.4,
+            "durum": "OK"
+          }
+        ]
+      }
+    },
+    {
+      "tarih": "2026-08-31",
+      "ay_adi": "Eylul 2026",
+      "portfoy_buyuklugu": 9309.22,
+      "pozisyon_yuzde": 10,
+      "hisseler": [
+        {
+          "sembol": "PANW",
+          "giris_fiyat": 359.98,
+          "lot": 2.586,
+          "tutar": 930.92,
+          "skor": 96.68
+        },
+        {
+          "sembol": "VLO",
+          "giris_fiyat": 310.2333,
+          "lot": 3.0007,
+          "tutar": 930.92,
+          "skor": 96.16
+        },
+        {
+          "sembol": "MPC",
+          "giris_fiyat": 312.8031,
+          "lot": 2.9761,
+          "tutar": 930.92,
+          "skor": 95.18
+        },
+        {
+          "sembol": "FTNT",
+          "giris_fiyat": 165.705,
+          "lot": 5.6179,
+          "tutar": 930.92,
+          "skor": 94.73
+        },
+        {
+          "sembol": "HPE",
+          "giris_fiyat": 50.9792,
+          "lot": 18.2608,
+          "tutar": 930.92,
+          "skor": 94.66
+        },
+        {
+          "sembol": "AMAT",
+          "giris_fiyat": 539.17,
+          "lot": 1.7266,
+          "tutar": 930.92,
+          "skor": 94.4
+        },
+        {
+          "sembol": "STT",
+          "giris_fiyat": 186.89,
+          "lot": 4.9811,
+          "tutar": 930.92,
+          "skor": 92.77
+        },
+        {
+          "sembol": "EXPE",
+          "giris_fiyat": 303.1,
+          "lot": 3.0713,
+          "tutar": 930.92,
+          "skor": 91.54
+        },
+        {
+          "sembol": "DVA",
+          "giris_fiyat": 229.91,
+          "lot": 4.0491,
+          "tutar": 930.92,
+          "skor": 91.34
+        },
+        {
+          "sembol": "DDOG",
+          "giris_fiyat": 283.115,
+          "lot": 3.2881,
+          "tutar": 930.92,
+          "skor": 91.28
+        }
+      ],
+      "kayit_zamani": "2026-08-04 14:59:12"
     }
   ]
 }
