@@ -334,7 +334,103 @@
           "skor": 97.01
         }
       ],
-      "kayit_zamani": "2026-08-03 09:07:45"
+      "kayit_zamani": "2026-08-03 09:07:45",
+      "onceki_ay_performans": {
+        "portfoy_yeni_deger": 74255.8,
+        "portfoy_giris_deger": 88174.3,
+        "aylik_getiri_pct": -15.79,
+        "hisse_detaylari": [
+          {
+            "sembol": "KTLEV",
+            "giris_fiyat": 155.6,
+            "son_fiyat": 41.42,
+            "getiri_pct": -73.38,
+            "giris_tutar": 17634.86,
+            "yeni_deger": 4694.32,
+            "durum": "OK"
+          },
+          {
+            "sembol": "ARASE",
+            "giris_fiyat": 113.4,
+            "son_fiyat": 112.0,
+            "getiri_pct": -1.23,
+            "giris_tutar": 17634.86,
+            "yeni_deger": 17417.14,
+            "durum": "OK"
+          },
+          {
+            "sembol": "EBEBK",
+            "giris_fiyat": 88.0,
+            "son_fiyat": 89.05,
+            "getiri_pct": 1.19,
+            "giris_tutar": 17634.87,
+            "yeni_deger": 17845.28,
+            "durum": "OK"
+          },
+          {
+            "sembol": "PAGYO",
+            "giris_fiyat": 166.4,
+            "son_fiyat": 161.2,
+            "getiri_pct": -3.13,
+            "giris_tutar": 17634.86,
+            "yeni_deger": 17083.77,
+            "durum": "OK"
+          },
+          {
+            "sembol": "KRDMB",
+            "giris_fiyat": 134.5,
+            "son_fiyat": 131.3,
+            "getiri_pct": -2.38,
+            "giris_tutar": 17634.86,
+            "yeni_deger": 17215.29,
+            "durum": "OK"
+          }
+        ]
+      }
+    },
+    {
+      "tarih": "2026-08-31",
+      "ay_adi": "Eylul 2026",
+      "portfoy_buyuklugu": 74251.58,
+      "pozisyon_yuzde": 20,
+      "hisseler": [
+        {
+          "sembol": "KTLEV",
+          "giris_fiyat": 41.42,
+          "lot": 358.5301,
+          "tutar": 14850.32,
+          "skor": 95.67
+        },
+        {
+          "sembol": "GMTAS",
+          "giris_fiyat": 45.88,
+          "lot": 323.6773,
+          "tutar": 14850.32,
+          "skor": 90.13
+        },
+        {
+          "sembol": "EBEBK",
+          "giris_fiyat": 89.05,
+          "lot": 166.7638,
+          "tutar": 14850.32,
+          "skor": 84.3
+        },
+        {
+          "sembol": "ARDYZ",
+          "giris_fiyat": 75.45,
+          "lot": 196.8233,
+          "tutar": 14850.32,
+          "skor": 94.47
+        },
+        {
+          "sembol": "ALKLC",
+          "giris_fiyat": 401.5,
+          "lot": 36.9871,
+          "tutar": 14850.32,
+          "skor": 91.78
+        }
+      ],
+      "kayit_zamani": "2026-08-04 15:14:55"
     }
   ]
 }
