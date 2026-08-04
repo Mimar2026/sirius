@@ -91,10 +91,28 @@ def retry(fonksiyon, max_deneme=3, bekleme=5, adim_adi="islem"):
     raise Exception(adim_adi + " - " + str(max_deneme) + " deneme sonrasi basarisiz: " + str(son_hata))
 
 
+# Nasdaq-100 icin sabit yedek liste (SlickCharts erisilemezse kullanilir)
+# Guncelleme: 2026-08, periyodik kontrol onerilir
+NASDAQ100_FALLBACK = [
+    "NVDA", "AAPL", "MSFT", "AMZN", "GOOGL", "GOOG", "AVGO", "META", "TSLA", "MU",
+    "WMT", "AMD", "ASML", "CSCO", "INTC", "COST", "AMAT", "LRCX", "NFLX", "PLTR",
+    "PANW", "ARM", "TXN", "KLAC", "LIN", "AMGN", "CRWD", "STX", "PEP", "WDC",
+    "TMUS", "SNDK", "ADI", "MRVL", "GILD", "QCOM", "SHOP", "BKNG", "APP", "ISRG",
+    "PDD", "VRTX", "SBUX", "FTNT", "ADP", "ADBE", "MAR", "DDOG", "MELI", "MNST",
+    "CEG", "CDNS", "CSX", "ABNB", "INTU", "DASH", "CMCSA", "CTAS", "ROST", "MDLZ",
+    "REGN", "HON", "SNPS", "ORLY", "MPWR", "PCAR", "AEP", "WBD", "BKR", "NXPI",
+    "TER", "FANG", "LITE", "FAST", "ALAB", "EA", "ADSK", "PYPL", "XEL", "NBIS",
+    "CCEP", "FER", "EXC", "TTWO", "ODFL", "IDXX", "TRI", "AXON", "KDP", "PAYX",
+    "RKLB", "MCHP", "WDAY", "CRWV", "ROP", "MSTR", "DXCM", "GEHC", "KHC", "ALNY",
+    "CPRT",
+]
+
+
 def hisse_evrenini_cek():
     """S&P 500 ve Nasdaq 100 birlestirilmis hisse evrenini doner."""
     headers = {"User-Agent": "Mozilla/5.0"}
 
+    # S&P 500 - Wikipedia (hala calisiyor)
     sp_url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
     sp_response = requests.get(sp_url, headers=headers, timeout=15)
     sp_tablolari = pd.read_html(StringIO(sp_response.text))
@@ -113,33 +131,31 @@ def hisse_evrenini_cek():
 
     sp500 = sp_tablo["Symbol"].tolist()
 
-    nq_url = "https://en.wikipedia.org/wiki/Nasdaq-100"
-    nq_response = requests.get(nq_url, headers=headers, timeout=15)
-    nq_tablolari = pd.read_html(StringIO(nq_response.text))
+    # Nasdaq 100 - SlickCharts (Wikipedia artik bu tabloyu icermiyor)
+    nasdaq100 = None
+    try:
+        nq_url = "https://www.slickcharts.com/nasdaq100"
+        nq_response = requests.get(nq_url, headers=headers, timeout=15)
+        nq_tablolari = pd.read_html(StringIO(nq_response.text))
 
-    nq_tablo = None
-    sembol_kol = None
-    olasi_kolonlar = ["Ticker", "Symbol", "Ticker symbol", "Ticker Symbol"]
-    for t in nq_tablolari:
-        for kol in olasi_kolonlar:
-            if kol in t.columns and len(t) >= 80:
-                nq_tablo = t
-                sembol_kol = kol
+        for t in nq_tablolari:
+            if "Symbol" in t.columns and len(t) >= 90:
+                nasdaq100 = t["Symbol"].astype(str).tolist()
                 break
-        if nq_tablo is not None:
-            break
 
-    if nq_tablo is None:
-        print("  UYARI: Nasdaq-100 tablosu bulunamadi. Bulunan tablolar:")
-        for i, t in enumerate(nq_tablolari):
-            print(f"    Tablo {i}: {list(t.columns)[:5]}... ({len(t)} satir)")
-        raise Exception("Nasdaq-100 tablosu bulunamadi - Wikipedia sayfa yapisi degismis olabilir")
+        if nasdaq100 is None:
+            print("  UYARI: SlickCharts Nasdaq-100 tablosu bulunamadi. Bulunan tablolar:")
+            for i, t in enumerate(nq_tablolari):
+                print(f"    Tablo {i}: {list(t.columns)[:6]}... ({len(t)} satir)")
+    except Exception as e:
+        print(f"  UYARI: SlickCharts erisim hatasi: {e}")
 
-    nasdaq100 = nq_tablo[sembol_kol].tolist()
+    if nasdaq100 is None:
+        print("  Nasdaq-100 icin sabit yedek liste kullaniliyor (guncelligini periyodik kontrol et)")
+        nasdaq100 = NASDAQ100_FALLBACK
 
     birlesik = sorted(list(set(sp500) | set(nasdaq100)))
     return [str(s).replace(".", "-") for s in birlesik]
-
 
 def fiyat_verisi_cek(semboller, donem="2y"):
     veri = yf.download(semboller, period=donem, interval="1d", progress=False, auto_adjust=True)
