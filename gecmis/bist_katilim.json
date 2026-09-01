@@ -910,7 +910,103 @@
           "skor": 96.41
         }
       ],
-      "kayit_zamani": "2026-08-04 15:04:53"
+      "kayit_zamani": "2026-08-04 15:04:53",
+      "onceki_ay_performans": {
+        "portfoy_yeni_deger": 151571.01,
+        "portfoy_giris_deger": 130438.4,
+        "aylik_getiri_pct": 16.2,
+        "hisse_detaylari": [
+          {
+            "sembol": "OZATD",
+            "giris_fiyat": 4027.5,
+            "son_fiyat": 4835.0,
+            "getiri_pct": 20.05,
+            "giris_tutar": 26087.73,
+            "yeni_deger": 31318.23,
+            "durum": "OK"
+          },
+          {
+            "sembol": "GUNDG",
+            "giris_fiyat": 1555.0,
+            "son_fiyat": 1666.0,
+            "getiri_pct": 7.14,
+            "giris_tutar": 26087.61,
+            "yeni_deger": 27949.82,
+            "durum": "OK"
+          },
+          {
+            "sembol": "KRDMB",
+            "giris_fiyat": 131.3,
+            "son_fiyat": 133.8,
+            "getiri_pct": 1.9,
+            "giris_tutar": 26087.68,
+            "yeni_deger": 26584.4,
+            "durum": "OK"
+          },
+          {
+            "sembol": "SELEC",
+            "giris_fiyat": 212.5,
+            "son_fiyat": 333.5,
+            "getiri_pct": 56.94,
+            "giris_tutar": 26087.69,
+            "yeni_deger": 40942.33,
+            "durum": "OK"
+          },
+          {
+            "sembol": "CELHA",
+            "giris_fiyat": 25.86,
+            "son_fiyat": 24.56,
+            "getiri_pct": -5.03,
+            "giris_tutar": 26087.68,
+            "yeni_deger": 24776.24,
+            "durum": "OK"
+          }
+        ]
+      }
+    },
+    {
+      "tarih": "2026-08-31",
+      "ay_adi": "Eylul 2026",
+      "portfoy_buyuklugu": 151569.44,
+      "pozisyon_yuzde": 20,
+      "hisseler": [
+        {
+          "sembol": "OZATD",
+          "giris_fiyat": 4835.0,
+          "lot": 6.2697,
+          "tutar": 30313.89,
+          "skor": 100.0
+        },
+        {
+          "sembol": "KTLEV",
+          "giris_fiyat": 62.8,
+          "lot": 482.7052,
+          "tutar": 30313.89,
+          "skor": 98.65
+        },
+        {
+          "sembol": "SELEC",
+          "giris_fiyat": 333.5,
+          "lot": 90.8962,
+          "tutar": 30313.89,
+          "skor": 98.51
+        },
+        {
+          "sembol": "GUNDG",
+          "giris_fiyat": 1666.0,
+          "lot": 18.1956,
+          "tutar": 30313.89,
+          "skor": 97.76
+        },
+        {
+          "sembol": "KRDMB",
+          "giris_fiyat": 133.8,
+          "lot": 226.5612,
+          "tutar": 30313.89,
+          "skor": 95.22
+        }
+      ],
+      "kayit_zamani": "2026-09-01 05:10:08"
     }
   ]
 }
