@@ -63,6 +63,17 @@ def gecmis_kaydet(sistem_kodu, veri):
     with open(yol, 'w', encoding='utf-8') as f:
         json.dump(veri, f, indent=2, ensure_ascii=False)
 
+def ay_zaten_islendi_mi(gecmis, hedef_ay_adi):
+    """
+    Son kayit hedef ay ile ayniysa, bu ay icin zaten bir portfoy
+    secimi yapilmis demektir. Ayni donem icinde birden fazla
+    calistirma (ör. manuel test) gecmisi kirletmesin diye kullanilir.
+    """
+    kayitlar = gecmis.get("kayitlar", [])
+    if not kayitlar:
+        return False
+    return kayitlar[-1].get("ay_adi") == hedef_ay_adi
+
 
 def hisse_kapanis_cek(sembol, kaynak_func):
     """
@@ -76,39 +87,30 @@ def hisse_kapanis_cek(sembol, kaynak_func):
         return None
 
 
+SUPHELI_ESIK_YUZDE = 60  # Tek ayda bu esigi asan hareket "supheli" isaretlenir
+
+
 def onceki_portfoy_performans_hesapla(onceki_kayit, guncel_fiyatlar):
     """
     Onceki portfoyu guncel fiyatlarla degerleyip aylik getiri hesaplar.
-    
-    Args:
-        onceki_kayit: Onceki ayin kaydi (dict)
-        guncel_fiyatlar: {sembol: float} - guncel kapanis fiyatlari
-    
-    Returns:
-        dict: {
-            "portfoy_yeni_deger": ...,
-            "aylik_getiri_pct": ...,
-            "hisse_detaylari": [{sembol, giris, son, getiri_pct}, ...]
-        }
+    Anormal buyuk hareketleri (%60+) "supheli" olarak isaretler.
     """
     hisseler = onceki_kayit.get("hisseler", [])
     if not hisseler:
         return None
-    
-    # Her hisse icin yeni deger hesapla
+
     hisse_detaylari = []
     toplam_yeni_deger = 0
     toplam_giris_tutar = 0
-    
+
     for hisse in hisseler:
         sembol = hisse["sembol"]
         giris_fiyat = hisse.get("giris_fiyat", 0)
         lot = hisse.get("lot", 0)
-        
+
         guncel_fiyat = guncel_fiyatlar.get(sembol)
-        
+
         if guncel_fiyat is None or guncel_fiyat <= 0:
-            # Veri yoksa hisse "donmus" varsay (getiri 0)
             yeni_deger = lot * giris_fiyat
             getiri_pct = 0
             durum = "VERI_YOK"
@@ -116,9 +118,10 @@ def onceki_portfoy_performans_hesapla(onceki_kayit, guncel_fiyatlar):
             yeni_deger = lot * guncel_fiyat
             getiri_pct = ((guncel_fiyat - giris_fiyat) / giris_fiyat) * 100 if giris_fiyat > 0 else 0
             durum = "OK"
-        
+
         giris_tutar = lot * giris_fiyat
-        
+        supheli = abs(getiri_pct) >= SUPHELI_ESIK_YUZDE
+
         hisse_detaylari.append({
             "sembol": sembol,
             "giris_fiyat": giris_fiyat,
@@ -126,14 +129,15 @@ def onceki_portfoy_performans_hesapla(onceki_kayit, guncel_fiyatlar):
             "getiri_pct": round(getiri_pct, 2),
             "giris_tutar": round(giris_tutar, 2),
             "yeni_deger": round(yeni_deger, 2),
-            "durum": durum
+            "durum": durum,
+            "supheli": supheli
         })
-        
+
         toplam_yeni_deger += yeni_deger
         toplam_giris_tutar += giris_tutar
-    
+
     aylik_getiri_pct = ((toplam_yeni_deger - toplam_giris_tutar) / toplam_giris_tutar) * 100 if toplam_giris_tutar > 0 else 0
-    
+
     return {
         "portfoy_yeni_deger": round(toplam_yeni_deger, 2),
         "portfoy_giris_deger": round(toplam_giris_tutar, 2),
@@ -301,70 +305,65 @@ def yeni_kayit_olustur(top_n_df, kapanis_fiyatlari, tarih, ay_adi, portfoy_buyuk
 def performans_metni_olustur(kumulatif, gecmis_veri, para_birimi, para_format=",.2f"):
     """Telegram mesaji icin performans metnini olusturur."""
     if not kumulatif.get("kayit_var") or kumulatif.get("ay_sayisi", 0) == 0:
-        # Henuz performans kaydi yok
         return None
-    
+
     metin = "<b>📊 PERFORMANS GEÇMİŞİ</b>\n"
     metin += "━━━━━━━━━━━━━━━━━━━━\n"
-    
+
     baslangic = kumulatif["portfoy_baslangic"]
     guncel = kumulatif["portfoy_guncel"]
     kar = kumulatif["toplam_kar_zarar"]
     yuzde = kumulatif["toplam_getiri_pct"]
     ay_sayisi = kumulatif["ay_sayisi"]
-    
+
     metin += f"💰 Başlangıç: {para_birimi}{baslangic:{para_format}}\n"
     metin += f"📈 Güncel değer: {para_birimi}{guncel:{para_format}}\n"
-    
-    # Kar/zarar
+
     if kar >= 0:
         metin += f"🟢 Toplam kar: {para_birimi}+{kar:{para_format}} (+{yuzde:.2f}%)\n"
     else:
         metin += f"🔴 Toplam zarar: {para_birimi}{kar:{para_format}} ({yuzde:.2f}%)\n"
-    
+
     metin += f"📅 Dönem: {ay_sayisi} ay\n"
-    
-    # Yillik bilesik (en az 1 ay varsa)
+
     yillik = kumulatif["yillik_bilesik_pct"]
     if yillik >= 0:
         metin += f"📊 Yıllık bileşik: +{yillik:.1f}%\n"
     else:
         metin += f"📊 Yıllık bileşik: {yillik:.1f}%\n"
-    
-    # Max drawdown (en az 2 ay varsa anlamli)
+
     if ay_sayisi >= 2:
         dd = kumulatif["max_drawdown_pct"]
         metin += f"📉 Max düşüş: {dd:.1f}%\n"
-    
-    # Sharpe (en az 3 ay)
+
     if ay_sayisi >= 3:
         sharpe = kumulatif["sharpe"]
         metin += f"⚡ Sharpe: {sharpe:.2f}\n"
-    
-    # Son ayin detayi
+
     kayitlar = gecmis_veri.get("kayitlar", [])
     if len(kayitlar) >= 2:
-        # Son kayit yeni portfoy, ondan onceki "gecen ay"
         gecen_ay_kayit = kayitlar[-1]
         performans = gecen_ay_kayit.get("onceki_ay_performans")
-        
+
         if performans:
             metin += "\n<b>🗓️ Geçen Ay Detay</b>\n"
             aylik_getiri = performans.get("aylik_getiri_pct", 0)
             metin += f"   Aylık: {aylik_getiri:+.2f}%\n"
-            
-            # En iyi/en kotu hisseler (gecen aydan)
+
             hisseler = performans.get("hisse_detaylari", [])
             if hisseler:
                 hisseler_sirali = sorted(hisseler, key=lambda x: x.get("getiri_pct", 0), reverse=True)
-                
                 en_iyi = hisseler_sirali[0]
                 en_kotu = hisseler_sirali[-1]
-                
                 metin += f"   🏆 En iyi: {en_iyi['sembol']} {en_iyi['getiri_pct']:+.1f}%\n"
                 metin += f"   📉 En kötü: {en_kotu['sembol']} {en_kotu['getiri_pct']:+.1f}%\n"
-    
-    # Aylik dagilim (son 6 ay)
+
+            supheliler = [h for h in hisseler if h.get("supheli")]
+            if supheliler:
+                metin += "\n<b>⚠️ Veri Uyarısı:</b>\n"
+                for h in supheliler:
+                    metin += f"   {h['sembol']}: {h['getiri_pct']:+.1f}% — normalin disinda, kontrol onerilir\n"
+
     aylik_getiriler = kumulatif.get("aylik_getiriler", [])
     if len(aylik_getiriler) >= 1:
         son_aylar = aylik_getiriler[-6:]
@@ -372,7 +371,7 @@ def performans_metni_olustur(kumulatif, gecmis_veri, para_birimi, para_format=",
         for i, getiri in enumerate(son_aylar):
             isaret = "+" if getiri >= 0 else ""
             metin += f"   • Ay {len(aylik_getiriler) - len(son_aylar) + i + 1}: {isaret}{getiri:.1f}%\n"
-    
+
     metin += "━━━━━━━━━━━━━━━━━━━━"
-    
+
     return metin
