@@ -22,6 +22,7 @@ from sirius_helpers import (
 from performans_tracker import (
     gecmis_oku,
     gecmis_kaydet,
+    ay_zaten_islendi_mi,
     onceki_portfoy_performans_hesapla,
     kumulatif_performans_hesapla,
     yeni_kayit_olustur,
