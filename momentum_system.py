@@ -211,6 +211,30 @@ def main():
         aylik = aylik_fiyatlara_donustur(fiyatlar)
         print("  " + str(aylik.shape[1]) + " hisse / " + str(aylik.shape[0]) + " ay")
 
+                # --- Idempotency kontrolu: bu ay icin zaten kayit var mi? ---
+        veri_tarih = aylik.index[-1]
+        if veri_tarih.month == 12:
+            sonraki_ay_adi = f"Ocak {veri_tarih.year + 1}"
+        else:
+            sonraki_ay_adi = f"{AY_ISIMLERI[veri_tarih.month + 1]} {veri_tarih.year}"
+
+        if ay_zaten_islendi_mi(gecmis, sonraki_ay_adi):
+            print(f"\n  UYARI: '{sonraki_ay_adi}' icin zaten bir kayit var.")
+            print("  Bu ay tekrar islenmeyecek (idempotent koruma). Gecmis degistirilmedi.")
+            kisa_mesaj = (
+                "<b>EMOJI SIRIUS ADI</b>\n\n"
+                f"<i>{sonraki_ay_adi} portfoyu zaten olusturulmus.</i>\n"
+                "Bu calistirma ayni donem icinde tekrar tetiklendi "
+                "(muhtemelen manuel test). Gecmis degistirilmedi, "
+                "yeni bildirim gonderilmedi."
+            )
+            telegram_gonder(kisa_mesaj)
+            print("\n" + "=" * 70)
+            print("Tamamlandi (idempotent - islem yapilmadi).")
+            print("=" * 70)
+            return
+        # --- Idempotency kontrolu sonu ---
+
         print("\n[3/5] Onceki portfoyun performansi hesaplaniyor...")
         if gecmis["kayitlar"]:
             onceki_kayit = gecmis["kayitlar"][-1]
