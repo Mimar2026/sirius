@@ -284,12 +284,14 @@ def yeni_kayit_olustur(top_n_df, kapanis_fiyatlari, tarih, ay_adi, portfoy_buyuk
         else:
             lot = 0
         
-        hisseler.append({
+                hisseler.append({
             "sembol": sembol,
             "giris_fiyat": round(float(kapanis), 4) if kapanis else 0,
             "lot": round(float(lot), 4),
             "tutar": round(pozisyon_tutar, 2),
-            "skor": round(float(row.get("Momentum", 0)), 2)
+            "skor": round(float(row.get("Momentum", 0)), 2),
+            "stop_bildirildi": False,
+            "hedef_bildirildi": False
         })
     
     return {
