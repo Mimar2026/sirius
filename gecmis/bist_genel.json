@@ -15,35 +15,40 @@
           "giris_fiyat": 4835.0,
           "lot": 8.7001,
           "tutar": 42065.09,
-          "skor": 99.94
+          "skor": 99.94,
+          "stop_bildirildi": true
         },
         {
           "sembol": "BIGEN",
           "giris_fiyat": 183.8,
           "lot": 228.8634,
           "tutar": 42065.09,
-          "skor": 99.76
+          "skor": 99.76,
+          "stop_bildirildi": true
         },
         {
           "sembol": "ANELE",
           "giris_fiyat": 190.5,
           "lot": 220.8141,
           "tutar": 42065.09,
-          "skor": 99.14
+          "skor": 99.14,
+          "stop_bildirildi": true
         },
         {
           "sembol": "TRHOL",
           "giris_fiyat": 3135.0,
           "lot": 13.4179,
           "tutar": 42065.09,
-          "skor": 98.9
+          "skor": 98.9,
+          "stop_bildirildi": true
         },
         {
           "sembol": "KTLEV",
           "giris_fiyat": 62.8,
           "lot": 669.8263,
           "tutar": 42065.09,
-          "skor": 98.9
+          "skor": 98.9,
+          "stop_bildirildi": true
         }
       ],
       "kayit_zamani": "2026-09-01 05:16:50"

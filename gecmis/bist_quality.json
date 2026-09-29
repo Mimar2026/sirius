@@ -495,14 +495,16 @@
           "giris_fiyat": 86.5,
           "lot": 193.2258,
           "tutar": 16714.03,
-          "skor": 94.77
+          "skor": 94.77,
+          "stop_bildirildi": true
         },
         {
           "sembol": "ALKLC",
           "giris_fiyat": 425.75,
           "lot": 39.2579,
           "tutar": 16714.03,
-          "skor": 90.73
+          "skor": 90.73,
+          "stop_bildirildi": true
         },
         {
           "sembol": "TUPRS",
@@ -516,14 +518,16 @@
           "giris_fiyat": 62.8,
           "lot": 266.147,
           "tutar": 16714.03,
-          "skor": 98.65
+          "skor": 98.65,
+          "stop_bildirildi": true
         },
         {
           "sembol": "CATES",
           "giris_fiyat": 70.05,
           "lot": 238.6015,
           "tutar": 16714.03,
-          "skor": 92.97
+          "skor": 92.97,
+          "stop_bildirildi": true
         }
       ],
       "kayit_zamani": "2026-09-01 05:20:02"

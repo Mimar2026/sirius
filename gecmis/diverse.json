@@ -1599,7 +1599,8 @@
           "giris_fiyat": 140.34,
           "lot": 6.4045,
           "tutar": 898.81,
-          "skor": 99.8
+          "skor": 99.8,
+          "hedef_bildirildi": true
         },
         {
           "sembol": "VLO",
@@ -1662,7 +1663,8 @@
           "giris_fiyat": 317.12,
           "lot": 2.8343,
           "tutar": 898.81,
-          "skor": 92.9
+          "skor": 92.9,
+          "stop_bildirildi": true
         }
       ],
       "kayit_zamani": "2026-09-01 05:04:53"

@@ -15,35 +15,40 @@
           "giris_fiyat": 4835.0,
           "lot": 6.2697,
           "tutar": 30313.89,
-          "skor": 100.0
+          "skor": 100.0,
+          "stop_bildirildi": true
         },
         {
           "sembol": "KTLEV",
           "giris_fiyat": 62.8,
           "lot": 482.7052,
           "tutar": 30313.89,
-          "skor": 98.65
+          "skor": 98.65,
+          "stop_bildirildi": true
         },
         {
           "sembol": "SELEC",
           "giris_fiyat": 333.5,
           "lot": 90.8962,
           "tutar": 30313.89,
-          "skor": 98.51
+          "skor": 98.51,
+          "stop_bildirildi": true
         },
         {
           "sembol": "GUNDG",
           "giris_fiyat": 1666.0,
           "lot": 18.1956,
           "tutar": 30313.89,
-          "skor": 97.76
+          "skor": 97.76,
+          "stop_bildirildi": true
         },
         {
           "sembol": "KRDMB",
           "giris_fiyat": 133.8,
           "lot": 226.5612,
           "tutar": 30313.89,
-          "skor": 95.22
+          "skor": 95.22,
+          "stop_bildirildi": true
         }
       ],
       "kayit_zamani": "2026-09-01 05:10:08"

@@ -1599,7 +1599,8 @@
           "giris_fiyat": 317.12,
           "lot": 2.6021,
           "tutar": 825.17,
-          "skor": 92.9
+          "skor": 92.9,
+          "stop_bildirildi": true
         },
         {
           "sembol": "FTNT",

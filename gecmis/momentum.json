@@ -1599,7 +1599,8 @@
           "giris_fiyat": 140.34,
           "lot": 6.6274,
           "tutar": 930.08,
-          "skor": 99.8
+          "skor": 99.8,
+          "hedef_bildirildi": true
         },
         {
           "sembol": "VLO",
