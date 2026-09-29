@@ -263,7 +263,7 @@ def en_iyi_en_kotu_hisseler(gecmis_veri):
 def yeni_kayit_olustur(top_n_df, kapanis_fiyatlari, tarih, ay_adi, portfoy_buyuklugu, pozisyon_yuzde):
     """
     Yeni bir portfoy kaydi olusturur (henuz performans yok, sadece secimler).
-    
+
     Args:
         top_n_df: Secilen hisseler DataFrame
         kapanis_fiyatlari: {sembol: float}
@@ -273,18 +273,18 @@ def yeni_kayit_olustur(top_n_df, kapanis_fiyatlari, tarih, ay_adi, portfoy_buyuk
         pozisyon_yuzde: 10 veya 20
     """
     pozisyon_tutar = portfoy_buyuklugu * (pozisyon_yuzde / 100)
-    
+
     hisseler = []
     for _, row in top_n_df.iterrows():
         sembol = row["Sembol"]
         kapanis = kapanis_fiyatlari.get(sembol, 0)
-        
+
         if kapanis and kapanis > 0:
             lot = pozisyon_tutar / kapanis
         else:
             lot = 0
-        
-                hisseler.append({
+
+        hisseler.append({
             "sembol": sembol,
             "giris_fiyat": round(float(kapanis), 4) if kapanis else 0,
             "lot": round(float(lot), 4),
@@ -293,7 +293,7 @@ def yeni_kayit_olustur(top_n_df, kapanis_fiyatlari, tarih, ay_adi, portfoy_buyuk
             "stop_bildirildi": False,
             "hedef_bildirildi": False
         })
-    
+
     return {
         "tarih": tarih.strftime("%Y-%m-%d"),
         "ay_adi": ay_adi,
