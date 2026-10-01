@@ -51,7 +51,118 @@
           "stop_bildirildi": true
         }
       ],
-      "kayit_zamani": "2026-09-01 05:10:08"
+      "kayit_zamani": "2026-09-01 05:10:08",
+      "onceki_ay_performans": {
+        "portfoy_yeni_deger": 40451.8,
+        "portfoy_giris_deger": 151569.53,
+        "aylik_getiri_pct": -73.31,
+        "hisse_detaylari": [
+          {
+            "sembol": "OZATD",
+            "giris_fiyat": 4835.0,
+            "son_fiyat": 1568.0,
+            "getiri_pct": -67.57,
+            "giris_tutar": 30314.0,
+            "yeni_deger": 9830.89,
+            "durum": "OK",
+            "supheli": true
+          },
+          {
+            "sembol": "KTLEV",
+            "giris_fiyat": 62.8,
+            "son_fiyat": 9.61,
+            "getiri_pct": -84.7,
+            "giris_tutar": 30313.89,
+            "yeni_deger": 4638.8,
+            "durum": "OK",
+            "supheli": true
+          },
+          {
+            "sembol": "SELEC",
+            "giris_fiyat": 333.5,
+            "son_fiyat": 91.9,
+            "getiri_pct": -72.44,
+            "giris_tutar": 30313.88,
+            "yeni_deger": 8353.36,
+            "durum": "OK",
+            "supheli": true
+          },
+          {
+            "sembol": "GUNDG",
+            "giris_fiyat": 1666.0,
+            "son_fiyat": 231.1,
+            "getiri_pct": -86.13,
+            "giris_tutar": 30313.87,
+            "yeni_deger": 4205.0,
+            "durum": "OK",
+            "supheli": true
+          },
+          {
+            "sembol": "KRDMB",
+            "giris_fiyat": 133.8,
+            "son_fiyat": 59.25,
+            "getiri_pct": -55.72,
+            "giris_tutar": 30313.89,
+            "yeni_deger": 13423.75,
+            "durum": "OK",
+            "supheli": false
+          }
+        ]
+      }
+    },
+    {
+      "tarih": "2026-09-30",
+      "ay_adi": "Ekim 2026",
+      "portfoy_buyuklugu": 40453.88,
+      "pozisyon_yuzde": 20,
+      "hisseler": [
+        {
+          "sembol": "TKFEN",
+          "giris_fiyat": 231.4,
+          "lot": 34.9645,
+          "tutar": 8090.78,
+          "skor": 99.26,
+          "stop_bildirildi": false,
+          "hedef_bildirildi": false
+        },
+        {
+          "sembol": "CELHA",
+          "giris_fiyat": 26.98,
+          "lot": 299.8805,
+          "tutar": 8090.78,
+          "skor": 98.96,
+          "stop_bildirildi": false,
+          "hedef_bildirildi": false
+        },
+        {
+          "sembol": "GMTAS",
+          "giris_fiyat": 49.36,
+          "lot": 163.9136,
+          "tutar": 8090.78,
+          "skor": 97.32,
+          "stop_bildirildi": false,
+          "hedef_bildirildi": false
+        },
+        {
+          "sembol": "TUPRS",
+          "giris_fiyat": 376.25,
+          "lot": 21.5037,
+          "tutar": 8090.78,
+          "skor": 96.73,
+          "stop_bildirildi": false,
+          "hedef_bildirildi": false
+        },
+        {
+          "sembol": "OZATD",
+          "giris_fiyat": 1568.0,
+          "lot": 5.1599,
+          "tutar": 8090.78,
+          "skor": 96.28,
+          "stop_bildirildi": false,
+          "hedef_bildirildi": false
+        }
+      ],
+      "kayit_zamani": "2026-10-01 05:06:15"
     }
   ]
 }
