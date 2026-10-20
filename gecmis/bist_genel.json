@@ -122,7 +122,7 @@
           "lot": 52.1905,
           "tutar": 12076.89,
           "skor": 99.33,
-          "stop_bildirildi": false,
+          "stop_bildirildi": true,
           "hedef_bildirildi": false
         },
         {
