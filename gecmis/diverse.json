@@ -1852,7 +1852,7 @@
           "tutar": 953.28,
           "skor": 94.74,
           "stop_bildirildi": false,
-          "hedef_bildirildi": false
+          "hedef_bildirildi": true
         },
         {
           "sembol": "PSX",

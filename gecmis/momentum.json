@@ -1869,7 +1869,7 @@
           "tutar": 1023.0,
           "skor": 94.74,
           "stop_bildirildi": false,
-          "hedef_bildirildi": false
+          "hedef_bildirildi": true
         }
       ],
       "kayit_zamani": "2026-10-01 05:01:25"
