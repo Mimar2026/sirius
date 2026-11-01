@@ -641,7 +641,118 @@
           "hedef_bildirildi": false
         }
       ],
-      "kayit_zamani": "2026-10-01 05:17:02"
+      "kayit_zamani": "2026-10-01 05:17:02",
+      "onceki_ay_performans": {
+        "portfoy_yeni_deger": 38210.53,
+        "portfoy_giris_deger": 42687.64,
+        "aylik_getiri_pct": -10.49,
+        "hisse_detaylari": [
+          {
+            "sembol": "BIMAS",
+            "giris_fiyat": 418.5,
+            "son_fiyat": 347.5,
+            "getiri_pct": -16.97,
+            "giris_tutar": 8537.53,
+            "yeni_deger": 7089.1,
+            "durum": "OK",
+            "supheli": false
+          },
+          {
+            "sembol": "RGYAS",
+            "giris_fiyat": 189.4,
+            "son_fiyat": 168.5,
+            "getiri_pct": -11.03,
+            "giris_tutar": 8537.53,
+            "yeni_deger": 7595.42,
+            "durum": "OK",
+            "supheli": false
+          },
+          {
+            "sembol": "KRDMD",
+            "giris_fiyat": 43.98,
+            "son_fiyat": 36.16,
+            "getiri_pct": -17.78,
+            "giris_tutar": 8537.53,
+            "yeni_deger": 7019.49,
+            "durum": "OK",
+            "supheli": false
+          },
+          {
+            "sembol": "GMTAS",
+            "giris_fiyat": 49.36,
+            "son_fiyat": 55.15,
+            "getiri_pct": 11.73,
+            "giris_tutar": 8537.53,
+            "yeni_deger": 9538.99,
+            "durum": "OK",
+            "supheli": false
+          },
+          {
+            "sembol": "ISDMR",
+            "giris_fiyat": 60.85,
+            "son_fiyat": 49.66,
+            "getiri_pct": -18.39,
+            "giris_tutar": 8537.53,
+            "yeni_deger": 6967.52,
+            "durum": "OK",
+            "supheli": false
+          }
+        ]
+      }
+    },
+    {
+      "tarih": "2026-10-31",
+      "ay_adi": "Kasim 2026",
+      "portfoy_buyuklugu": 38209.7,
+      "pozisyon_yuzde": 20,
+      "hisseler": [
+        {
+          "sembol": "BIMAS",
+          "giris_fiyat": 347.5,
+          "lot": 21.9912,
+          "tutar": 7641.94,
+          "skor": 91.52,
+          "stop_bildirildi": false,
+          "hedef_bildirildi": false
+        },
+        {
+          "sembol": "ENJSA",
+          "giris_fiyat": 105.5,
+          "lot": 72.4355,
+          "tutar": 7641.94,
+          "skor": 91.07,
+          "stop_bildirildi": false,
+          "hedef_bildirildi": false
+        },
+        {
+          "sembol": "GMTAS",
+          "giris_fiyat": 55.15,
+          "lot": 138.5665,
+          "tutar": 7641.94,
+          "skor": 98.96,
+          "stop_bildirildi": false,
+          "hedef_bildirildi": false
+        },
+        {
+          "sembol": "AHGAZ",
+          "giris_fiyat": 46.06,
+          "lot": 165.9127,
+          "tutar": 7641.94,
+          "skor": 98.51,
+          "stop_bildirildi": false,
+          "hedef_bildirildi": false
+        },
+        {
+          "sembol": "TUPRS",
+          "giris_fiyat": 343.5,
+          "lot": 22.2473,
+          "tutar": 7641.94,
+          "skor": 97.77,
+          "stop_bildirildi": false,
+          "hedef_bildirildi": false
+        }
+      ],
+      "kayit_zamani": "2026-11-01 05:16:46"
     }
   ]
 }
