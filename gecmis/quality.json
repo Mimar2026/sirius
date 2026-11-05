@@ -1993,7 +1993,7 @@
           "lot": 0.8712,
           "tutar": 770.78,
           "skor": 88.95,
-          "stop_bildirildi": false,
+          "stop_bildirildi": true,
           "hedef_bildirildi": false
         },
         {
@@ -2074,7 +2074,7 @@
           "lot": 1.7331,
           "tutar": 770.78,
           "skor": 98.12,
-          "stop_bildirildi": false,
+          "stop_bildirildi": true,
           "hedef_bildirildi": false
         }
       ],

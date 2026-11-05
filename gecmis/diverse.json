@@ -2012,7 +2012,7 @@
           "lot": 2.1602,
           "tutar": 960.71,
           "skor": 98.12,
-          "stop_bildirildi": false,
+          "stop_bildirildi": true,
           "hedef_bildirildi": false
         },
         {
@@ -2057,7 +2057,7 @@
           "lot": 17.4389,
           "tutar": 960.71,
           "skor": 94.22,
-          "stop_bildirildi": false,
+          "stop_bildirildi": true,
           "hedef_bildirildi": false
         },
         {
