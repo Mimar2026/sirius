@@ -2011,7 +2011,7 @@
           "lot": 3.8698,
           "tutar": 770.78,
           "skor": 91.23,
-          "stop_bildirildi": false,
+          "stop_bildirildi": true,
           "hedef_bildirildi": false
         },
         {
