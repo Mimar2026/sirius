@@ -261,7 +261,7 @@
           "tutar": 6243.65,
           "skor": 98.36,
           "stop_bildirildi": false,
-          "hedef_bildirildi": false
+          "hedef_bildirildi": true
         },
         {
           "sembol": "TUPRS",
