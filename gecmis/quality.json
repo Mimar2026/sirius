@@ -2056,7 +2056,7 @@
           "lot": 2.7252,
           "tutar": 770.78,
           "skor": 97.08,
-          "stop_bildirildi": false,
+          "stop_bildirildi": true,
           "hedef_bildirildi": false
         },
         {
